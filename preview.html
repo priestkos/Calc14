@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin:0; background:#1c1c1e; font-family: "Segoe UI", Arial, sans-serif; display:flex; gap:24px; padding:24px; }
+  .calc {
+    width: 300px; border-radius: 6px; overflow:hidden;
+    background: rgba(23,13,10,0.97);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    padding: 10px;
+  }
+  .titlebar { display:flex; align-items:center; gap:8px; padding:2px 4px 8px; }
+  .titlebar .dot { width:8px; height:8px; border-radius:50%; background:#f2741a; }
+  .titlebar span { color:#ffb591; font-size:12px; }
+  .display {
+    background: rgba(36,20,15,0.95);
+    border-radius: 4px; padding: 8px 12px; margin-bottom: 8px;
+  }
+  .sub { color:#bf9e85; font-size:12px; text-align:left; height:16px; }
+  .result { color:#ffebd9; font-size:34px; text-align:right; font-weight:300; letter-spacing:0.5px; }
+  .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; }
+  button {
+    height: 58px; border:none; border-radius:8px; cursor:pointer;
+    font-size:19px; color:#ffebd9; background:#332119;
+    transition: filter .08s;
+  }
+  button:hover { filter: brightness(1.25); }
+  .op { background:#f2741a; }
+  .op:hover { background:#ff8c33; }
+  .clear { background:#b8291f; }
+  .clear:hover { background:#dc3d2e; }
+  .hist { margin-top:10px; }
+  .hist label { color:#ffebd9; font-size:12px; display:flex; align-items:center; gap:6px; }
+  .histbox {
+    background: rgba(36,20,15,0.95); border-radius:4px; margin-top:6px;
+    height: 120px; overflow:hidden; padding:6px 8px; font-size:12px;
+  }
+  .histbox div { color:#ffebd9; padding:4px 4px; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .histbox div:first-child { background: rgba(242,116,26,0.18); border-radius:3px; }
+  .note { color:#888; font-size:12px; max-width:260px; align-self:center; }
+</style>
+</head>
+<body>
+  <div class="calc">
+    <div class="titlebar"><div class="dot"></div><span>Calculator##CalculatorXIV</span></div>
+    <div class="display">
+      <div class="sub">&nbsp;</div>
+      <div class="result">46</div>
+    </div>
+    <div class="grid">
+      <button class="clear">AC</button><button class="clear">CE</button><button>⌫</button><button class="op">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="op">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="op">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="op">+</button>
+      <button>%</button><button>0</button><button>.</button><button class="op">=</button>
+    </div>
+    <div class="hist">
+      <label><input type="checkbox" checked> History</label>
+      <div class="histbox">
+        <div>12 + 34 = 46</div>
+        <div>200 + 10% = 220</div>
+        <div>9 ÷ 2 = 4.5</div>
+        <div>6 × 7 = 42</div>
+      </div>
+    </div>
+  </div>
+  <div class="note">HTML replica of the ImGui window — same palette, layout and button grid as the in-game plugin. In-game it sits in a standard Dalamud window with a drag bar.</div>
+</body>
+</html>
