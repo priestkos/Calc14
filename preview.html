@@ -2,70 +2,240 @@
 <html>
 <head>
 <meta charset="utf-8">
+<title>CalculatorXIV preview</title>
 <style>
-  body { margin:0; background:#1c1c1e; font-family: "Segoe UI", Arial, sans-serif; display:flex; gap:24px; padding:24px; }
+  :root {
+    --bg: #1c1c1e;
+    --calc-bg: rgba(23,13,10,0.97);
+    --panel: rgba(36,20,15,0.95);
+    --key: #332119;
+    --orange: #f2741a;
+    --orange-h: #ff8c33;
+    --red: #b8291f;
+    --red-h: #dc3d2e;
+    --text: #ffebd9;
+    --dim: #bf9e85;
+    --title: #ffb591;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: "Segoe UI", Arial, sans-serif;
+  }
+  body.shot {
+    display: inline-block;
+    padding: 20px;
+    background: #121214;
+  }
+  body.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 24px;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  body.overlay {
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(40, 70, 90, 0.45), transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(90, 50, 30, 0.35), transparent 45%),
+      linear-gradient(160deg, #1a2430 0%, #0e141c 45%, #1c1814 100%);
+    width: 960px;
+    height: 540px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  body.overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,0.35) 0%, transparent 30%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(255,255,255,0.015) 3px,
+        rgba(255,255,255,0.015) 4px
+      );
+    pointer-events: none;
+  }
+  .hud {
+    position: absolute;
+    left: 28px;
+    bottom: 28px;
+    color: rgba(220, 235, 255, 0.55);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    z-index: 0;
+  }
+  .hud strong { display: block; color: rgba(255, 210, 160, 0.7); font-size: 13px; letter-spacing: 0.04em; margin-bottom: 4px; text-transform: none; }
   .calc {
-    width: 300px; border-radius: 6px; overflow:hidden;
-    background: rgba(23,13,10,0.97);
+    width: 300px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--calc-bg);
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     padding: 10px;
+    position: relative;
+    z-index: 1;
   }
-  .titlebar { display:flex; align-items:center; gap:8px; padding:2px 4px 8px; }
-  .titlebar .dot { width:8px; height:8px; border-radius:50%; background:#f2741a; }
-  .titlebar span { color:#ffb591; font-size:12px; }
+  body.overlay .calc {
+    box-shadow: 0 16px 50px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,180,120,0.08);
+  }
+  .titlebar { display: flex; align-items: center; gap: 8px; padding: 2px 4px 8px; }
+  .titlebar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+  .titlebar span { color: var(--title); font-size: 12px; }
   .display {
-    background: rgba(36,20,15,0.95);
-    border-radius: 4px; padding: 8px 12px; margin-bottom: 8px;
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
   }
-  .sub { color:#bf9e85; font-size:12px; text-align:left; height:16px; }
-  .result { color:#ffebd9; font-size:34px; text-align:right; font-weight:300; letter-spacing:0.5px; }
-  .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; }
+  .sub { color: var(--dim); font-size: 12px; text-align: left; height: 16px; }
+  .result { color: var(--text); font-size: 34px; text-align: right; font-weight: 300; letter-spacing: 0.5px; }
+  .result.small { font-size: 22px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   button {
-    height: 58px; border:none; border-radius:8px; cursor:pointer;
-    font-size:19px; color:#ffebd9; background:#332119;
-    transition: filter .08s;
+    height: 58px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 19px;
+    color: var(--text);
+    background: var(--key);
   }
-  button:hover { filter: brightness(1.25); }
-  .op { background:#f2741a; }
-  .op:hover { background:#ff8c33; }
-  .clear { background:#b8291f; }
-  .clear:hover { background:#dc3d2e; }
-  .hist { margin-top:10px; }
-  .hist label { color:#ffebd9; font-size:12px; display:flex; align-items:center; gap:6px; }
+  .op { background: var(--orange); }
+  .clear { background: var(--red); }
+  .pressed { filter: brightness(1.35); outline: 2px solid rgba(255,235,217,0.35); outline-offset: -2px; }
+  .hist { margin-top: 10px; }
+  .hist label { color: var(--text); font-size: 12px; display: flex; align-items: center; gap: 6px; }
   .histbox {
-    background: rgba(36,20,15,0.95); border-radius:4px; margin-top:6px;
-    height: 120px; overflow:hidden; padding:6px 8px; font-size:12px;
+    background: var(--panel);
+    border-radius: 4px;
+    margin-top: 6px;
+    height: 120px;
+    overflow: hidden;
+    padding: 6px 8px;
+    font-size: 12px;
   }
-  .histbox div { color:#ffebd9; padding:4px 4px; border-bottom:1px solid rgba(255,255,255,0.06); }
-  .histbox div:first-child { background: rgba(242,116,26,0.18); border-radius:3px; }
-  .note { color:#888; font-size:12px; max-width:260px; align-self:center; }
+  .histbox div {
+    color: var(--text);
+    padding: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .histbox div:first-child {
+    background: rgba(242,116,26,0.18);
+    border-radius: 3px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card .caption {
+    color: #888;
+    font-size: 12px;
+    max-width: 300px;
+  }
+  .note { color: #888; font-size: 12px; max-width: 260px; align-self: center; }
 </style>
 </head>
 <body>
-  <div class="calc">
-    <div class="titlebar"><div class="dot"></div><span>Calculator##CalculatorXIV</span></div>
-    <div class="display">
-      <div class="sub">&nbsp;</div>
-      <div class="result">46</div>
-    </div>
-    <div class="grid">
-      <button class="clear">AC</button><button class="clear">CE</button><button>⌫</button><button class="op">÷</button>
-      <button>7</button><button>8</button><button>9</button><button class="op">×</button>
-      <button>4</button><button>5</button><button>6</button><button class="op">−</button>
-      <button>1</button><button>2</button><button>3</button><button class="op">+</button>
-      <button>%</button><button>0</button><button>.</button><button class="op">=</button>
-    </div>
-    <div class="hist">
-      <label><input type="checkbox" checked> History</label>
-      <div class="histbox">
-        <div>12 + 34 = 46</div>
-        <div>200 + 10% = 220</div>
-        <div>9 ÷ 2 = 4.5</div>
-        <div>6 × 7 = 42</div>
+<script>
+  const params = new URLSearchParams(location.search);
+  const mode = params.get("mode") || "gallery";
+
+  const states = {
+    result: {
+      sub: "\u00a0",
+      result: "46",
+      history: true,
+      lines: ["12 + 34 = 46", "200 + 10% = 220", "9 ÷ 2 = 4.5", "6 × 7 = 42"],
+      press: null,
+    },
+    mid: {
+      sub: "128 ÷",
+      result: "16",
+      history: true,
+      lines: ["6 × 7 = 42", "9 ÷ 2 = 4.5", "200 + 10% = 220"],
+      press: null,
+    },
+    compact: {
+      sub: "\u00a0",
+      result: "0",
+      history: false,
+      lines: [],
+      press: null,
+    },
+    equals: {
+      sub: "\u00a0",
+      result: "1337",
+      history: true,
+      lines: ["1000 + 337 = 1337", "50 × 2 = 100", "9 ÷ 3 = 3"],
+      press: "=",
+    },
+  };
+
+  function renderCalc(state, extraClass = "") {
+    const hist = state.history
+      ? `<div class="hist">
+          <label><input type="checkbox" checked disabled> History</label>
+          <div class="histbox">${state.lines.map((l) => `<div>${l}</div>`).join("")}</div>
+        </div>`
+      : `<div class="hist"><label><input type="checkbox" disabled> History</label></div>`;
+
+    const keys = [
+      ["AC", "clear"], ["CE", "clear"], ["⌫", ""], ["÷", "op"],
+      ["7", ""], ["8", ""], ["9", ""], ["×", "op"],
+      ["4", ""], ["5", ""], ["6", ""], ["−", "op"],
+      ["1", ""], ["2", ""], ["3", ""], ["+", "op"],
+      ["%", ""], ["0", ""], [".", ""], ["=", "op"],
+    ];
+    const grid = keys
+      .map(([label, cls]) => {
+        const pressed = state.press === label ? " pressed" : "";
+        return `<button class="${cls}${pressed}">${label}</button>`;
+      })
+      .join("");
+
+    const resultClass = state.result.length > 9 ? "result small" : "result";
+    return `<div class="calc ${extraClass}">
+      <div class="titlebar"><div class="dot"></div><span>Calculator##CalculatorXIV</span></div>
+      <div class="display">
+        <div class="sub">${state.sub}</div>
+        <div class="${resultClass}">${state.result}</div>
       </div>
-    </div>
-  </div>
-  <div class="note">HTML replica of the ImGui window — same palette, layout and button grid as the in-game plugin. In-game it sits in a standard Dalamud window with a drag bar.</div>
+      <div class="grid">${grid}</div>
+      ${hist}
+    </div>`;
+  }
+
+  if (mode === "gallery") {
+    document.body.className = "gallery";
+    document.body.innerHTML = `
+      <div class="card">${renderCalc(states.result)}<div class="caption">Result with history open</div></div>
+      <div class="card">${renderCalc(states.mid)}<div class="caption">Mid-operation (pending ÷)</div></div>
+      <div class="card">${renderCalc(states.compact)}<div class="caption">Compact — history hidden</div></div>
+      <p class="note">HTML replica of the ImGui window — same palette, layout and button grid as the in-game plugin.</p>
+    `;
+  } else if (mode === "overlay") {
+    document.body.className = "overlay";
+    document.body.innerHTML = `
+      <div class="hud"><strong>Limsa Lominsa Lower Decks</strong>Party · Duty Finder · Chat</div>
+      ${renderCalc(states.equals)}
+    `;
+  } else {
+    document.body.className = "shot";
+    const state = states[mode] || states.result;
+    document.body.innerHTML = renderCalc(state);
+  }
+</script>
 </body>
 </html>
