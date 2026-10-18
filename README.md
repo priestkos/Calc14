@@ -21,13 +21,9 @@ These are HTML mockups of the ImGui window (same warm ember palette and layout a
 - `CalculatorXIVPlugin.cs`: plugin entry point.
 - `CalculatorWindow.cs`: calculator UI.
 - `CalculatorState.cs`: calculator state.
-<<<<<<< HEAD
+- `CalculatorXIV.Tests/`: unit tests for `CalculatorState`.
 - `preview.html`: UI preview (modes via `?mode=result|mid|compact|overlay|gallery`).
 - `screenshots/`: simulated PNGs rendered from the preview.
-=======
-- `CalculatorXIV.Tests/`: unit tests for `CalculatorState`.
-- `preview.html`: UI preview.
->>>>>>> origin/main
 
 ## Build
 
