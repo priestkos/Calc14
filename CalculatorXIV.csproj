@@ -10,7 +10,7 @@
     <Author>saijm</Author>
     <Name>CalculatorXIV</Name>
     <Punchline>A fast, pretty calculator for FFXIV.</Punchline>
-    <RepoUrl>https://example.com/CalculatorXIV</RepoUrl>
+    <RepoUrl>https://github.com/priestkos/CalculatorXIV</RepoUrl>
     <Tags>utility</Tags>
   </PropertyGroup>
 </Project>
