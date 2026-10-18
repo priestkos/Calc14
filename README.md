@@ -21,9 +21,22 @@ These are HTML mockups of the ImGui window (same warm ember palette and layout a
 - `CalculatorXIVPlugin.cs`: plugin entry point.
 - `CalculatorWindow.cs`: calculator UI.
 - `CalculatorState.cs`: calculator state.
+<<<<<<< HEAD
 - `preview.html`: UI preview (modes via `?mode=result|mid|compact|overlay|gallery`).
 - `screenshots/`: simulated PNGs rendered from the preview.
+=======
+- `CalculatorXIV.Tests/`: unit tests for `CalculatorState`.
+- `preview.html`: UI preview.
+>>>>>>> origin/main
 
 ## Build
 
-Requires the .NET SDK and a Dalamud development environment. Check `CalculatorXIV.csproj` before building. Not yet built or tested as part of this README.
+Requires the .NET SDK and a Dalamud development environment. Check `CalculatorXIV.csproj` before building.
+
+## Tests
+
+`CalculatorState` is covered by a standalone xUnit project (no Dalamud required):
+
+```bash
+dotnet test CalculatorXIV.Tests/CalculatorXIV.Tests.csproj
+```

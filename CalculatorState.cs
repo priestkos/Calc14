@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 
 namespace CalculatorXIV;
 
@@ -22,7 +20,8 @@ public sealed class CalculatorState
     public double Accumulator => accumulator;
     public Op CurrentOp => pendingOp;
 
-    private static string Format(double d)
+    /// <summary>Formats a numeric result for display and history (always invariant culture).</summary>
+    public static string FormatResult(double d)
     {
         if (double.IsNaN(d) || double.IsInfinity(d)) return "Error";
         return Math.Abs(d) >= 1e15 || (Math.Abs(d) < 1e-10 && d != 0)
@@ -30,8 +29,34 @@ public sealed class CalculatorState
             : d.ToString("0.############", CultureInfo.InvariantCulture);
     }
 
+    private static string Format(double d) => FormatResult(d);
+
+    private static bool IsErrorValue(double d) => double.IsNaN(d) || double.IsInfinity(d);
+
+    /// <summary>
+    /// Loads a display/history value as the current entry without keystroke replay.
+    /// Rejects non-numeric strings (including "Error").
+    /// </summary>
+    public bool TrySetEntry(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value) || value == "Error")
+            return false;
+        if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var v))
+            return false;
+        if (IsErrorValue(v))
+            return false;
+
+        ClearAll();
+        entry = Format(v);
+        freshEntry = true;
+        return true;
+    }
+
     public void Digit(char c)
     {
+        if (c != '.' && (c < '0' || c > '9'))
+            return;
+
         if (freshEntry || entry == "0" && !entry.Contains('.'))
         {
             entry = c == '.' ? "0." : c.ToString();
@@ -99,12 +124,19 @@ public sealed class CalculatorState
         else if (!freshEntry || pendingOp == Op.None)
             accumulator = v;
 
+        if (IsErrorValue(accumulator))
+        {
+            ClearAll();
+            entry = "Error";
+            return entry;
+        }
+
         pendingOp = op;
         freshEntry = true;
         return Format(accumulator);
     }
 
-    /// <summary>Equals: applies pending operation and returns the display string (null on error).</summary>
+    /// <summary>Equals: applies pending operation and returns the display string, or null on error.</summary>
     public string? Equals_()
     {
         if (!double.TryParse(entry, NumberStyles.Float, CultureInfo.InvariantCulture, out var v))
@@ -115,6 +147,13 @@ public sealed class CalculatorState
             result = Apply(pendingOp, accumulator, v);
         else
             result = v;
+
+        if (IsErrorValue(result))
+        {
+            ClearAll();
+            entry = "Error";
+            return null;
+        }
 
         entry = Format(result);
         accumulator = 0;

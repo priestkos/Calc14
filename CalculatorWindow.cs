@@ -18,7 +18,6 @@ public sealed class CalculatorWindow : Window, IDisposable
     private bool showHistory = true;
 
     // Theme: warm ember palette
-    private static readonly Vector4 BgDark = new(0.09f, 0.05f, 0.04f, 0.97f);
     private static readonly Vector4 Panel = new(0.14f, 0.08f, 0.06f, 0.95f);
     private static readonly Vector4 AccentOrange = new(0.95f, 0.45f, 0.10f, 1f);
     private static readonly Vector4 AccentOrangeHover = new(1f, 0.55f, 0.20f, 1f);
@@ -43,17 +42,6 @@ public sealed class CalculatorWindow : Window, IDisposable
         if (history.Count > 100) history.RemoveAt(history.Count - 1);
     }
 
-    private void PushDisplay(string value)
-    {
-        display = value;
-        PushHistoryIfResult(value);
-    }
-
-    private void PushHistoryIfResult(string value)
-    {
-        // history lines are added by operations below; display-only updates don't record
-    }
-
     private void RecordHistory(string expr, string result)
     {
         AddHistory($"{expr} = {result}");
@@ -63,6 +51,13 @@ public sealed class CalculatorWindow : Window, IDisposable
     {
         var before = calc.Entry;
         var shown = calc.SetOp(op);
+        if (shown == "Error")
+        {
+            display = "Error";
+            subDisplay = string.Empty;
+            return;
+        }
+
         if (calc.HasPending || shown != before)
             subDisplay = $"{shown} {symbol}";
         display = shown;
@@ -70,7 +65,9 @@ public sealed class CalculatorWindow : Window, IDisposable
 
     private void Equals()
     {
-        var expr = calc.HasPending ? $"{calc.Accumulator.ToString(CultureInfo.InvariantCulture)} {OpName(calc.CurrentOp)} {calc.Entry}" : calc.Entry;
+        var expr = calc.HasPending
+            ? $"{calc.Accumulator.ToString(CultureInfo.InvariantCulture)} {OpName(calc.CurrentOp)} {calc.Entry}"
+            : calc.Entry;
         var result = calc.Equals_();
         if (result is null)
         {
@@ -94,7 +91,10 @@ public sealed class CalculatorWindow : Window, IDisposable
 
     public override void Draw()
     {
-        DrawTheme();
+        // Keep style pushes alive for the whole frame (not just DrawTheme()).
+        using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, new Vector2(10, 10) * ImGuiHelpers.GlobalScale);
+        using var round = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 8 * ImGuiHelpers.GlobalScale);
+        using var border = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0);
 
         // ---- display ----
         using (ImRaii.PushColor(ImGuiCol.ChildBg, Panel))
@@ -127,7 +127,6 @@ public sealed class CalculatorWindow : Window, IDisposable
 
         // ---- button grid ----
         var bs = 60 * ImGuiHelpers.GlobalScale; // button size
-        var spacing = 6 * ImGuiHelpers.GlobalScale;
 
         void Key(string label, Vector4 color, Vector4 hover, Action action)
         {
@@ -141,6 +140,7 @@ public sealed class CalculatorWindow : Window, IDisposable
         // Row 1: AC, CE, ⌫, ÷
         Key("AC", AccentRed, AccentRedHover, () => { calc.ClearAll(); display = "0"; subDisplay = string.Empty; });
         ImGui.SameLine();
+        // CE clears the entry only; keep subDisplay so the pending op remains visible.
         Key("CE", AccentRed, AccentRedHover, () => { calc.Clear(); display = "0"; });
         ImGui.SameLine();
         Key("\u232b", KeyPad, KeyPadHover, () => { calc.Backspace(); display = calc.Entry; });
@@ -185,8 +185,7 @@ public sealed class CalculatorWindow : Window, IDisposable
 
         // ---- history ----
         ImGui.Spacing();
-        if (ImGui.Checkbox("History", ref showHistory))
-            SaveHistoryPref();
+        ImGui.Checkbox("History", ref showHistory);
 
         if (showHistory)
         {
@@ -204,14 +203,13 @@ public sealed class CalculatorWindow : Window, IDisposable
                     {
                         for (var i = 0; i < history.Count; i++)
                         {
-                            if (ImGui.Selectable(history[i]))
+                            if (ImGui.Selectable($"{history[i]}##hist{i}"))
                             {
                                 // clicking a result loads it as the current entry
                                 var idx = history[i].LastIndexOf(" = ", StringComparison.Ordinal);
                                 if (idx >= 0)
                                 {
                                     var val = history[i][(idx + 3)..];
-                                    display = val;
                                     LoadEntry(val);
                                 }
                             }
@@ -228,28 +226,9 @@ public sealed class CalculatorWindow : Window, IDisposable
 
     private void LoadEntry(string val)
     {
-        if (double.TryParse(val, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
-        {
-            display = val;
-            // set via digit-level entry rebuild
-            calc.ClearAll();
-            foreach (var ch in val)
-            {
-                if (ch == '-')
-                    calc.Negate();
-                else
-                    calc.Digit(ch);
-            }
-        }
-    }
-
-    private static void SaveHistoryPref() { /* default on; no config file needed for now */ }
-
-    private static void DrawTheme()
-    {
-        using var style = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, new Vector2(10, 10) * ImGuiHelpers.GlobalScale);
-        using var s2 = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 8 * ImGuiHelpers.GlobalScale);
-        using var s3 = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0);
+        if (!calc.TrySetEntry(val))
+            return;
+        display = calc.Entry;
     }
 
     public void Dispose() { }
