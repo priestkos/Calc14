@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Dalamud.Interface.Windowing;
-using CalculatorXIV;
 
 namespace CalculatorXIV;
 
@@ -54,8 +50,10 @@ public sealed class CalculatorXIVPlugin : IDalamudPlugin
             var result = CalculatorState.Evaluate(args);
             if (result is not null)
             {
-                Log.Info($"{args} = {result.Value.ToString(CultureInfo.CurrentCulture)}");
-                calculatorWindow.AddHistory($"{args} = {result.Value.ToString(CultureInfo.CurrentCulture)}");
+                // Invariant formatting so history clicks parse via TrySetEntry.
+                var formatted = CalculatorState.FormatResult(result.Value);
+                Log.Info($"{args} = {formatted}");
+                calculatorWindow.AddHistory($"{args} = {formatted}");
                 return;
             }
 
