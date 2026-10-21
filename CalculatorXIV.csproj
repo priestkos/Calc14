@@ -1,11 +1,14 @@
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
   <PropertyGroup>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Description>A snappy calculator with history, percentage and clear modes.</Description>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="CalculatorXIV.Tests/**" />
+  </ItemGroup>
   <PropertyGroup>
     <Author>saijm</Author>
     <Name>CalculatorXIV</Name>
