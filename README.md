@@ -10,18 +10,6 @@ A keypad calculator that opens over FFXIV, with a 100-entry history and inline e
 - **History** — the last 100 calculations, newest first. Click a line to load its result; `Clear History` empties the log.
 - **Inline math** — `/calc 1+2*3` evaluates without the window and writes to log and history.
 
-## Screenshots
-
-HTML mockups of the ImGui window after the review-findings build (warm ember palette, `Clear History`, divide-by-zero `Error`). Open [`preview.html`](preview.html) for an interactive gallery.
-
-| Result + history | Mid-operation | Compact |
-| --- | --- | --- |
-| ![Result with history](screenshots/calc_result_history.png) | ![Pending division](screenshots/calc_mid_operation.png) | ![History hidden](screenshots/calc_compact.png) |
-
-| In-game overlay | Divide-by-zero Error |
-| --- | --- |
-| ![In-game overlay](screenshots/calc_ingame_overlay.png) | ![Error state](screenshots/calc_error.png) |
-
 ## How it works
 
 - Digits append up to 17 characters; a second `.` is ignored and non-digits are dropped.
@@ -64,7 +52,7 @@ dotnet test CalculatorXIV.Tests/CalculatorXIV.Tests.csproj    # 18 cases
 
 - `%` is accumulator-relative only after `+`/`−`; after `×`/`÷` it is a plain entry/100 operand.
 - `/calc <expr>` has no parentheses, exponents or functions, and prints to the log — never to the keypad display.
-- The screenshots are HTML mockups, not game captures; the drawn window is not verified against them in game.
+- Not verified in game: behaviour is taken from the code and the offline tests, not from a live client.
 
 ## Layout
 
@@ -74,6 +62,5 @@ CalculatorWindow.cs        ImGui keypad, display, history list
 CalculatorState.cs         entry/pending-op state, formatting, shunting-yard evaluator
 CalculatorXIV.Tests/       xUnit tests for `CalculatorState`
 preview.html               UI preview (modes via ?mode=result|mid|compact|overlay|error|gallery)
-screenshots/               simulated PNGs rendered from the preview
 IDEA.md                    original goal
 ```
