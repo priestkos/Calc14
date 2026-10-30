@@ -15,6 +15,6 @@
     <Name>CalculatorXIV</Name>
     <Punchline>A fast, pretty calculator for FFXIV.</Punchline>
     <RepoUrl>https://github.com/priestkos/CalculatorXIV</RepoUrl>
-    <Tags>utility</Tags>
+    <Tags>calculator;utility</Tags>
   </PropertyGroup>
 </Project>
