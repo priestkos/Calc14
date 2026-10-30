@@ -1,10 +1,16 @@
 # CalculatorXIV
 
-A calculator plugin for FINAL FANTASY XIV, built on Dalamud.
+A keypad calculator that opens over FFXIV, with a 100-entry history and inline expression evaluation from chat.
 
-See [IDEA.md](IDEA.md) for the original goal.
+`/calc` · Dalamud API 15 · .NET 10
 
-## Simulated screenshots
+## What it does
+
+- **Calculator window** — five rows of 60 px keys (AC, CE, backspace, four operators, `%`, `.`, `=`), a right-aligned result that shrinks its font as it grows, and a collapsible history pane; auto-resizing, 320 px wide.
+- **History** — the last 100 calculations, newest first. Click a line to load its result; `Clear History` empties the log.
+- **Inline math** — `/calc 1+2*3` evaluates without the window and writes to log and history.
+
+## Screenshots
 
 HTML mockups of the ImGui window after the review-findings build (warm ember palette, `Clear History`, divide-by-zero `Error`). Open [`preview.html`](preview.html) for an interactive gallery.
 
@@ -16,23 +22,58 @@ HTML mockups of the ImGui window after the review-findings build (warm ember pal
 | --- | --- |
 | ![In-game overlay](screenshots/calc_ingame_overlay.png) | ![Error state](screenshots/calc_error.png) |
 
-## Layout
+## How it works
 
-- `CalculatorXIVPlugin.cs`: plugin entry point.
-- `CalculatorWindow.cs`: calculator UI.
-- `CalculatorState.cs`: calculator state.
-- `CalculatorXIV.Tests/`: unit tests for `CalculatorState`.
-- `preview.html`: UI preview (modes via `?mode=result|mid|compact|overlay|error|gallery`).
-- `screenshots/`: simulated PNGs rendered from the preview.
+- Digits append up to 17 characters; a second `.` is ignored and non-digits are dropped.
+- `%` divides by 100, except straight after `+`/`−`, where it is that percent of the accumulator (`200 + 10%` → `220`).
+- Operators execute immediately, left to right — no keypad precedence. Division by zero shows `Error`, resets, and the next digit starts fresh.
+- Results are invariant-culture: `G9` above 1e15 or below 1e-10, else up to 12 decimals; NaN and infinity become `Error`.
+- `/calc <expr>` is shunting-yard over `+ - * /` (`x` also multiplies), with precedence and unary minus, no parentheses; errors are logged and add nothing.
+
+## Commands
+
+| Command | Effect |
+| --- | --- |
+| `/calc` | Toggle the window (also the installer's main UI button) |
+| `/calc <expr>` | Evaluate and log an expression; the result is added to history |
 
 ## Build
 
-Requires the .NET SDK and a Dalamud development environment. Check `CalculatorXIV.csproj` before building.
+Requires the .NET 10 SDK and the Dalamud dev distribution (`%APPDATA%\XIVLauncher\addon\Hooks\dev`, or `DALAMUD_HOME`).
+
+```
+dotnet build -c Debug      # load bin/Debug/CalculatorXIV.dll as a dev plugin
+dotnet build -c Release    # zip in bin/Release/CalculatorXIV/latest.zip
+```
+
+## Install (dev plugin)
+
+1. `/xlsettings` → Experimental → Dev Plugin Locations → add `bin\Debug\CalculatorXIV.dll`.
+2. `/xlplugins` → Dev Tools → enable **CalculatorXIV**.
+3. `/calc` opens the window; there is no settings window.
 
 ## Tests
 
-`CalculatorState` is covered by a standalone xUnit project (no Dalamud required):
+`CalculatorState` is a plain class, so the xUnit project runs offline without Dalamud: shunting-yard precedence and unary minus, rejected expressions, percent of the accumulator, the divide-by-zero reset, invariant formatting round-tripping through `TrySetEntry`, and operator chaining.
 
-```bash
-dotnet test CalculatorXIV.Tests/CalculatorXIV.Tests.csproj
+```
+dotnet test CalculatorXIV.Tests/CalculatorXIV.Tests.csproj    # 18 cases
+```
+
+## Limits
+
+- `%` is accumulator-relative only after `+`/`−`; after `×`/`÷` it is a plain entry/100 operand.
+- `/calc <expr>` has no parentheses, exponents or functions, and prints to the log — never to the keypad display.
+- The screenshots are HTML mockups, not game captures; the drawn window is not verified against them in game.
+
+## Layout
+
+```
+CalculatorXIVPlugin.cs     plugin entry point, `/calc` handler and window wiring
+CalculatorWindow.cs        ImGui keypad, display, history list
+CalculatorState.cs         entry/pending-op state, formatting, shunting-yard evaluator
+CalculatorXIV.Tests/       xUnit tests for `CalculatorState`
+preview.html               UI preview (modes via ?mode=result|mid|compact|overlay|error|gallery)
+screenshots/               simulated PNGs rendered from the preview
+IDEA.md                    original goal
 ```
