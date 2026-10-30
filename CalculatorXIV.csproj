@@ -10,7 +10,8 @@
     <Compile Remove="CalculatorXIV.Tests/**" />
   </ItemGroup>
   <PropertyGroup>
-    <Author>saijm</Author>
+    <Author>PriestKos</Author>
+    <Authors>PriestKos</Authors>
     <Name>CalculatorXIV</Name>
     <Punchline>A fast, pretty calculator for FFXIV.</Punchline>
     <RepoUrl>https://github.com/priestkos/CalculatorXIV</RepoUrl>
