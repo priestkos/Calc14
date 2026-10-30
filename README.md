@@ -61,6 +61,4 @@ CalculatorXIVPlugin.cs     plugin entry point, `/calc` handler and window wiring
 CalculatorWindow.cs        ImGui keypad, display, history list
 CalculatorState.cs         entry/pending-op state, formatting, shunting-yard evaluator
 CalculatorXIV.Tests/       xUnit tests for `CalculatorState`
-preview.html               UI preview (modes via ?mode=result|mid|compact|overlay|error|gallery)
-IDEA.md                    original goal
 ```
