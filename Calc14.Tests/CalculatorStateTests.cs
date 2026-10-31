@@ -1,7 +1,7 @@
 using System.Globalization;
 using Xunit;
 
-namespace CalculatorXIV.Tests;
+namespace Calc14.Tests;
 
 public class CalculatorStateTests
 {

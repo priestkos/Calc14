@@ -7,7 +7,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 
-namespace CalculatorXIV;
+namespace Calc14;
 
 public sealed class CalculatorWindow : Window, IDisposable
 {
@@ -28,7 +28,7 @@ public sealed class CalculatorWindow : Window, IDisposable
     private static readonly Vector4 TextWarm = new(1f, 0.92f, 0.85f, 1f);
     private static readonly Vector4 TextDim = new(0.75f, 0.62f, 0.52f, 1f);
 
-    public CalculatorWindow() : base("Calculator##CalculatorXIV")
+    public CalculatorWindow() : base("Calculator##Calc14")
     {
         Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse |
                 ImGuiWindowFlags.AlwaysAutoResize;

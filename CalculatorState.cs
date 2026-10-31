@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace CalculatorXIV;
+namespace Calc14;
 
 /// <summary>Calculator state machine: entry, pending operation, history, percentage handling.</summary>
 public sealed class CalculatorState

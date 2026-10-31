@@ -7,14 +7,14 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="CalculatorXIV.Tests/**" />
+    <Compile Remove="Calc14.Tests/**" />
   </ItemGroup>
   <PropertyGroup>
     <Author>PriestKos</Author>
     <Authors>PriestKos</Authors>
-    <Name>CalculatorXIV</Name>
+    <Name>Calc14</Name>
     <Punchline>A fast, pretty calculator for FFXIV.</Punchline>
-    <RepoUrl>https://github.com/priestkos/CalculatorXIV</RepoUrl>
+    <RepoUrl>https://github.com/priestkos/Calc14</RepoUrl>
     <Tags>calculator;utility</Tags>
   </PropertyGroup>
 </Project>

@@ -1,4 +1,4 @@
-# CalculatorXIV
+# Calc14
 
 A keypad calculator that opens over FFXIV, with a 100-entry history and inline expression evaluation from chat.
 
@@ -30,14 +30,14 @@ A keypad calculator that opens over FFXIV, with a 100-entry history and inline e
 Requires the .NET 10 SDK and the Dalamud dev distribution (`%APPDATA%\XIVLauncher\addon\Hooks\dev`, or `DALAMUD_HOME`).
 
 ```
-dotnet build -c Debug      # load bin/Debug/CalculatorXIV.dll as a dev plugin
-dotnet build -c Release    # zip in bin/Release/CalculatorXIV/latest.zip
+dotnet build -c Debug      # load bin/Debug/Calc14.dll as a dev plugin
+dotnet build -c Release    # zip in bin/Release/Calc14/latest.zip
 ```
 
 ## Install (dev plugin)
 
-1. `/xlsettings` → Experimental → Dev Plugin Locations → add `bin\Debug\CalculatorXIV.dll`.
-2. `/xlplugins` → Dev Tools → enable **CalculatorXIV**.
+1. `/xlsettings` → Experimental → Dev Plugin Locations → add `bin\Debug\Calc14.dll`.
+2. `/xlplugins` → Dev Tools → enable **Calc14**.
 3. `/calc` opens the window; there is no settings window.
 
 ## Tests
@@ -45,7 +45,7 @@ dotnet build -c Release    # zip in bin/Release/CalculatorXIV/latest.zip
 `CalculatorState` is a plain class, so the xUnit project runs offline without Dalamud: shunting-yard precedence and unary minus, rejected expressions, percent of the accumulator, the divide-by-zero reset, invariant formatting round-tripping through `TrySetEntry`, and operator chaining.
 
 ```
-dotnet test CalculatorXIV.Tests/CalculatorXIV.Tests.csproj    # 18 cases
+dotnet test Calc14.Tests/Calc14.Tests.csproj    # 18 cases
 ```
 
 ## Limits
@@ -57,8 +57,8 @@ dotnet test CalculatorXIV.Tests/CalculatorXIV.Tests.csproj    # 18 cases
 ## Layout
 
 ```
-CalculatorXIVPlugin.cs     plugin entry point, `/calc` handler and window wiring
+Calc14Plugin.cs     plugin entry point, `/calc` handler and window wiring
 CalculatorWindow.cs        ImGui keypad, display, history list
 CalculatorState.cs         entry/pending-op state, formatting, shunting-yard evaluator
-CalculatorXIV.Tests/       xUnit tests for `CalculatorState`
+Calc14.Tests/       xUnit tests for `CalculatorState`
 ```

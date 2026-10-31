@@ -4,9 +4,9 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Dalamud.Interface.Windowing;
 
-namespace CalculatorXIV;
+namespace Calc14;
 
-public sealed class CalculatorXIVPlugin : IDalamudPlugin
+public sealed class Calc14Plugin : IDalamudPlugin
 {
     [PluginService] private static IDalamudPluginInterface PluginInterface { get; set; } = null!;
     [PluginService] private static ICommandManager CommandManager { get; set; } = null!;
@@ -16,10 +16,10 @@ public sealed class CalculatorXIVPlugin : IDalamudPlugin
     private readonly WindowSystem windowSystem;
     private readonly CalculatorWindow calculatorWindow;
 
-    public CalculatorXIVPlugin()
+    public Calc14Plugin()
     {
         calculatorWindow = new CalculatorWindow();
-        windowSystem = new WindowSystem("CalculatorXIV");
+        windowSystem = new WindowSystem("Calc14");
         windowSystem.AddWindow(calculatorWindow);
 
         PluginInterface.UiBuilder.Draw += windowSystem.Draw;
@@ -30,7 +30,7 @@ public sealed class CalculatorXIVPlugin : IDalamudPlugin
             HelpMessage = "Open the calculator. Usage: /calc [expression] to evaluate inline.",
         });
 
-        Log.Debug("CalculatorXIV loaded");
+        Log.Debug("Calc14 loaded");
     }
 
     public void Dispose()
