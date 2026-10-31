@@ -1,0 +1,94 @@
+@import url("../../screenshots/src/imgui-calc14.css");
+
+.walkthrough-root {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+}
+
+.walkthrough-scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.walkthrough-scene.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.video-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  padding: 14px 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #ffebd9;
+  background: linear-gradient(180deg, rgba(20, 10, 8, 0.92), rgba(20, 10, 8, 0.55));
+  border-bottom: 1px solid rgba(242, 115, 26, 0.45);
+}
+
+.video-banner.is-hidden {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.video-caption {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500;
+  max-width: 920px;
+  padding: 10px 22px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+.key.key-highlight {
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  box-shadow: 0 0 12px rgba(242, 115, 26, 0.85);
+}
+
+.calc-window.compact {
+  width: 320px;
+  top: 380px !important;
+  left: 780px !important;
+}
+.calc-window.compact .history-panel {
+  height: 72px;
+}
+.calc-window.compact .key-grid {
+  display: none;
+}
+.calc-window.compact .display-panel {
+  min-height: 48px;
+}
+
+.log-line.is-hidden {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.log-line {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.history-panel.is-collapsed,
+.btn-clear.is-collapsed {
+  display: none !important;
+}
