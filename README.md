@@ -32,15 +32,13 @@ Screenshots are mock-ups illustrating the UI, not captures from the live game.
 | **Error** display (e.g. divide by zero) | [05-error-long-display.png](docs/screenshots/05-error-long-display.png) |
 | Long result / entry display font scaling | [05-error-long-display.png](docs/screenshots/05-error-long-display.png) |
 
-Mock-up sources live under `docs/screenshots/src/`; regenerate PNGs with `npm install && npm run render` in `docs/screenshots/`.
-
 ### Mock-up video
 
 Walkthrough of the same UI mock-ups (not in-game footage):
 
 ![Calc14 mock-up walkthrough preview](docs/videos/mockup-walkthrough.gif)
 
-[Full walkthrough (MP4)](docs/videos/mockup-walkthrough.mp4) · Regenerate with `npm install && npm run render` in `docs/videos/`.
+[Full walkthrough (MP4)](docs/videos/mockup-walkthrough.mp4)
 
 ## What it does
 
