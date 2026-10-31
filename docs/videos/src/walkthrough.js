@@ -28,8 +28,6 @@ function centerOf(el, rootRect) {
   };
 }
 
-const SCENE_NAMES = ["main", "history", "collapsed", "inline", "error"];
-
 const state = {
   bannerHidden: false,
   activeScene: "main",
@@ -139,26 +137,6 @@ function simulateClick(el, t) {
   spawnRipple(x, y, t);
   state.pressedUntil.set(el, t + 160);
   el.classList.add("is-pressed");
-}
-
-function moveCursorTo(el, startT, dur, t) {
-  const rootRect = $("root").getBoundingClientRect();
-  const target = centerOf(el, rootRect);
-  const progress = clamp((t - startT) / dur, 0, 1);
-  const eased = easeInOutCubic(progress);
-  if (progress <= 0) return;
-  state.cursor.visible = true;
-  if (!state.cursorMoveFrom) {
-    state.cursorMoveFrom = { x: state.cursor.x, y: state.cursor.y };
-    state.cursorMoveTo = target;
-    state.cursorMoveStart = startT;
-    state.cursorMoveDur = dur;
-  }
-  state.cursor.x = lerp(state.cursorMoveFrom.x, state.cursorMoveTo.x, eased);
-  state.cursor.y = lerp(state.cursorMoveFrom.y, state.cursorMoveTo.y, eased);
-  if (progress >= 1) {
-    state.cursorMoveFrom = null;
-  }
 }
 
 function beginCursorMove(fromX, fromY, el, startT, dur) {
