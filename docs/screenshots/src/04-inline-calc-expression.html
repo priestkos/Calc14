@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calc14 mock — /calc expression</title>
+  <link rel="stylesheet" href="imgui-calc14.css" />
+  <style>
+    .calc-window.compact { width: 320px; top: 380px; left: 780px; }
+    .calc-window.compact .history-panel { height: 72px; }
+    .calc-window.compact .key-grid { display: none; }
+    .calc-window.compact .display-panel { min-height: 48px; }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="hud-label">Mock game view · Example Character</div>
+    <div class="imgui-window log-window" style="top: 72px; left: 48px;">
+      <div class="imgui-titlebar">
+        <span>Dalamud / Plugin Log</span>
+        <span class="close"></span>
+      </div>
+      <div class="log-body">
+        <div class="log-line log-info">[Info] Calc14: 1+2*3 = 7</div>
+        <div class="log-line log-error">[Error] Calc14: Could not evaluate: 1/0</div>
+      </div>
+    </div>
+    <div class="chat-hint"><kbd>/calc 1+2*3</kbd> evaluates without opening the keypad</div>
+    <div class="imgui-window calc-window compact" style="top: 380px; left: 780px;">
+      <div class="imgui-titlebar">
+        <span>Calculator</span>
+        <span class="close"></span>
+      </div>
+      <div class="imgui-body">
+        <div class="display-panel">
+          <div class="sub-display"></div>
+          <div class="main-display size-lg">0</div>
+        </div>
+        <div class="history-row">
+          <input type="checkbox" checked disabled /> History
+        </div>
+        <div class="history-panel">
+          <ul class="history-list">
+            <li>1+2*3 = 7</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="callout" style="top: 240px; left: 48px; max-width: 360px;">Successful <kbd>/calc &lt;expr&gt;</kbd> writes <code>expr = result</code> to the plugin log and prepends the same line to history (window may stay closed).</p>
+  </div>
+</body>
+</html>

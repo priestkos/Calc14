@@ -4,6 +4,36 @@ A keypad calculator that opens over FFXIV, with a 100-entry history and inline e
 
 `/calc` · Dalamud API 15 · .NET 10
 
+## Screenshots
+
+Screenshots are mock-ups illustrating the UI, not captures from the live game.
+
+| | |
+| --- | --- |
+| ![Calculator window with keypad, pending operation, and history](docs/screenshots/01-main-window-keypad.png) | **Main window** — `Calculator` title bar, sub-display (`200 +`), entry display, full 60 px keypad (AC, CE, ⌫, ÷, digits, ×, −, +, `%`, `.`, `=`), **History** checkbox (default on), and **Clear History**. |
+| ![History list with a selected line](docs/screenshots/02-history-interaction.png) | **History** — newest-first lines (e.g. `200 + 10% = 220`); click a row to load its result; **Clear History** empties the log. |
+| ![History checkbox off hides the pane](docs/screenshots/03-history-collapsed-empty.png) | **Collapsible history** — uncheck **History** to hide the list and **Clear History** button. |
+| ![Plugin log and history from /calc expression](docs/screenshots/04-inline-calc-expression.png) | **Inline `/calc <expr>`** — evaluates without the keypad; success logs `expr = result` via `Log.Info` and prepends the same line to history; invalid input logs `Could not evaluate`. |
+| ![Error state and long entry display](docs/screenshots/05-error-long-display.png) | **Error & display scaling** — divide-by-zero shows **Error** (empty history shows **No calculations yet.**); long entries shrink the result font (17-digit entry cap). |
+
+### Feature coverage
+
+| Feature | Shown in |
+| --- | --- |
+| `/calc` toggles the calculator window | [01-main-window-keypad.png](docs/screenshots/01-main-window-keypad.png) |
+| Dalamud **Open Main UI** button toggles the same window (no separate settings UI) | Same window as `/calc` — [01](docs/screenshots/01-main-window-keypad.png) |
+| Keypad: AC (full reset), CE (clear entry), ⌫, `+` `−` `×` `÷`, `%`, `.`, `=` | [01](docs/screenshots/01-main-window-keypad.png) |
+| Sub-display for pending operator; main result display | [01](docs/screenshots/01-main-window-keypad.png), [05](docs/screenshots/05-error-long-display.png) |
+| `%` as percent of accumulator after `+` / `−` (e.g. `200 + 10%`) | [01](docs/screenshots/01-main-window-keypad.png), [02](docs/screenshots/02-history-interaction.png) |
+| History (up to 100 entries), click line to load result, **Clear History** | [02](docs/screenshots/02-history-interaction.png) |
+| **History** checkbox hides/shows history pane | [03-history-collapsed-empty.png](docs/screenshots/03-history-collapsed-empty.png) |
+| Empty history message **No calculations yet.** | [05-error-long-display.png](docs/screenshots/05-error-long-display.png) |
+| `/calc <expr>` inline evaluation (log + history; shunting-yard precedence) | [04-inline-calc-expression.png](docs/screenshots/04-inline-calc-expression.png) |
+| **Error** display (e.g. divide by zero) | [05-error-long-display.png](docs/screenshots/05-error-long-display.png) |
+| Long result / entry display font scaling | [05-error-long-display.png](docs/screenshots/05-error-long-display.png) |
+
+Mock-up sources live under `docs/screenshots/src/`; regenerate PNGs with `npm install && npm run render` in `docs/screenshots/`.
+
 ## What it does
 
 - **Calculator window** — five rows of 60 px keys (AC, CE, backspace, four operators, `%`, `.`, `=`), a right-aligned result that shrinks its font as it grows, and a collapsible history pane; auto-resizing, 320 px wide.

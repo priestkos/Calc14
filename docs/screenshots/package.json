@@ -1,0 +1,11 @@
+{
+  "name": "calc14-screenshot-mockups",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node src/render.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.58.0"
+  }
+}

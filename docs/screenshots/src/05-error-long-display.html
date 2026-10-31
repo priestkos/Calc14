@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calc14 mock — error and long display</title>
+  <link rel="stylesheet" href="imgui-calc14.css" />
+</head>
+<body>
+  <div class="scene">
+    <div class="hud-label">Mock game view · Example Character</div>
+    <div class="imgui-window calc-window" style="top: 48px; left: 320px;">
+      <div class="imgui-titlebar">
+        <span>Calculator</span>
+        <span class="close"></span>
+      </div>
+      <div class="imgui-body">
+        <div class="display-panel">
+          <div class="sub-display">100 ÷</div>
+          <div class="main-display size-lg" style="color: #ff9990;">Error</div>
+        </div>
+        <div class="key-grid">
+          <button class="key key-red" type="button">AC</button>
+          <button class="key key-red" type="button">CE</button>
+          <button class="key key-pad" type="button">⌫</button>
+          <button class="key key-orange" type="button">÷</button>
+          <button class="key key-pad" type="button">7</button>
+          <button class="key key-pad" type="button">8</button>
+          <button class="key key-pad" type="button">9</button>
+          <button class="key key-orange" type="button">×</button>
+          <button class="key key-pad" type="button">4</button>
+          <button class="key key-pad" type="button">5</button>
+          <button class="key key-pad" type="button">6</button>
+          <button class="key key-orange" type="button">−</button>
+          <button class="key key-pad" type="button">1</button>
+          <button class="key key-pad" type="button">2</button>
+          <button class="key key-pad" type="button">3</button>
+          <button class="key key-orange" type="button">+</button>
+          <button class="key key-pad" type="button">%</button>
+          <button class="key key-pad" type="button">0</button>
+          <button class="key key-pad" type="button">.</button>
+          <button class="key key-orange" type="button">=</button>
+        </div>
+        <div class="history-row">
+          <input type="checkbox" checked disabled /> History
+        </div>
+        <div class="history-panel empty">No calculations yet.</div>
+        <button class="btn-clear" type="button">Clear History</button>
+      </div>
+    </div>
+    <div class="imgui-window calc-window" style="top: 48px; left: 680px;">
+      <div class="imgui-titlebar">
+        <span>Calculator</span>
+        <span class="close"></span>
+      </div>
+      <div class="imgui-body">
+        <div class="display-panel">
+          <div class="sub-display"></div>
+          <div class="main-display size-sm">123456789012345</div>
+        </div>
+        <div class="key-grid">
+          <button class="key key-red" type="button">AC</button>
+          <button class="key key-red" type="button">CE</button>
+          <button class="key key-pad" type="button">⌫</button>
+          <button class="key key-orange" type="button">÷</button>
+          <button class="key key-pad" type="button">7</button>
+          <button class="key key-pad" type="button">8</button>
+          <button class="key key-pad" type="button">9</button>
+          <button class="key key-orange" type="button">×</button>
+          <button class="key key-pad" type="button">4</button>
+          <button class="key key-pad" type="button">5</button>
+          <button class="key key-pad" type="button">6</button>
+          <button class="key key-orange" type="button">−</button>
+          <button class="key key-pad" type="button">1</button>
+          <button class="key key-pad" type="button">2</button>
+          <button class="key key-pad" type="button">3</button>
+          <button class="key key-orange" type="button">+</button>
+          <button class="key key-pad" type="button">%</button>
+          <button class="key key-pad" type="button">0</button>
+          <button class="key key-pad" type="button">.</button>
+          <button class="key key-orange" type="button">=</button>
+        </div>
+        <div class="history-row">
+          <input type="checkbox" checked disabled /> History
+        </div>
+        <div class="history-panel empty">No calculations yet.</div>
+        <button class="btn-clear" type="button">Clear History</button>
+      </div>
+    </div>
+    <p class="callout" style="top: 560px; left: 320px;">Divide-by-zero shows <strong>Error</strong> and resets state. Long entries use a smaller display font (17-digit cap).</p>
+  </div>
+</body>
+</html>
