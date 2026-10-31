@@ -45,9 +45,21 @@ jobs:
 
           $archive = [System.IO.Compression.ZipFile]::OpenRead((Resolve-Path 'latest.zip'))
           try {
-            $jsonEntry = $archive.Entries | Where-Object { $_.Name -like '*.json' } | Select-Object -First 1
-            if (-not $jsonEntry) { throw 'No manifest JSON found in latest.zip' }
-            $stream = $jsonEntry.Open()
+            $dllEntries = @($archive.Entries | Where-Object { $_.Name -like '*.dll' })
+            if ($dllEntries.Count -eq 0) { throw 'No plugin .dll found inside latest.zip' }
+
+            [xml]$proj = Get-Content -LiteralPath 'Calc14.csproj'
+            $assemblyBase = ($proj.Project.PropertyGroup | ForEach-Object { $_.Name } | Where-Object { $_ } | Select-Object -First 1)
+            if (-not $assemblyBase) { $assemblyBase = 'Calc14' }
+            $preferredDll = "$assemblyBase.dll"
+            $dllEntry = $dllEntries | Where-Object { $_.Name -eq $preferredDll } | Select-Object -First 1
+            if (-not $dllEntry) { $dllEntry = $dllEntries | Select-Object -First 1 }
+
+            $manifestName = [System.IO.Path]::ChangeExtension($dllEntry.Name, '.json')
+            $manifestEntry = $archive.Entries | Where-Object { $_.Name -eq $manifestName } | Select-Object -First 1
+            if (-not $manifestEntry) { throw "Manifest $manifestName not found inside latest.zip" }
+
+            $stream = $manifestEntry.Open()
             try {
               $manifest = [System.IO.StreamReader]::new($stream).ReadToEnd() | ConvertFrom-Json
             } finally {
