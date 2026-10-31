@@ -13,7 +13,7 @@
     <div class="video-caption" id="caption"></div>
 
     <!-- Scene 0: Main window -->
-    <div class="walkthrough-scene is-active" data-scene="main">
+    <div class="walkthrough-scene" data-scene="main">
       <div class="scene">
         <div class="hud-label">Mock game view · Example Character</div>
         <div class="imgui-window calc-window" style="top: 80px; left: 480px;">
@@ -181,7 +181,7 @@
             <div class="log-line log-error is-hidden" id="log-error">[Error] Calc14: Could not evaluate: 1/0</div>
           </div>
         </div>
-        <div class="chat-hint"><kbd>/calc 1+2*3</kbd> evaluates without opening the keypad</div>
+        <div class="chat-hint" id="inline-chat-hint"><kbd>/calc 1+2*3</kbd> evaluates without opening the keypad</div>
         <div class="imgui-window calc-window compact">
           <div class="imgui-titlebar">
             <span>Calculator</span>
@@ -287,6 +287,21 @@
             <button class="btn-clear" type="button">Clear History</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="walkthrough-overlay" id="overlay" aria-hidden="true">
+      <div id="ripple-layer"></div>
+      <div class="walkthrough-cursor" id="cursor">
+        <svg class="cursor-svg" viewBox="0 0 24 28" width="24" height="28" aria-hidden="true">
+          <path
+            d="M2 2 L2 22 L8 17 L12 26 L15 25 L11 16 L18 16 Z"
+            fill="#fff"
+            stroke="#1a1a1a"
+            stroke-width="1.2"
+            stroke-linejoin="round"
+          />
+        </svg>
       </div>
     </div>
   </div>

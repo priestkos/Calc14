@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Record Calc14 mock-up walkthrough (1280×720) and export MP4 + GIF.
- * Deterministic timeline — no wall-clock drift in scene logic.
+ * Record Calc14 mock-up walkthrough (1280×720 @ 30fps) and export MP4 + GIF.
+ * Frame-driven timeline for smooth cursor motion and transitions.
  */
 import { chromium } from "playwright";
 import { spawnSync } from "child_process";
@@ -16,26 +16,8 @@ const webmPath = path.join(videosDir, ".walkthrough-record.webm");
 const mp4Path = path.join(videosDir, "mockup-walkthrough.mp4");
 const gifPath = path.join(videosDir, "mockup-walkthrough.gif");
 
-/** @type {{ action: string, ms: number }[]} */
-const TIMELINE = [
-  { action: "reset", ms: 400 },
-  { action: "disclaimerHold", ms: 2800 },
-  { action: "hideDisclaimer", ms: 600 },
-  { action: "sceneMainIntro", ms: 3200 },
-  { action: "highlightPercent", ms: 2800 },
-  { action: "highlightEquals", ms: 2800 },
-  { action: "sceneHistoryIntro", ms: 2200 },
-  { action: "historySelect", ms: 1400, arg: 1 },
-  { action: "historySelect", ms: 1400, arg: 2 },
-  { action: "sceneCollapsedIntro", ms: 2200 },
-  { action: "collapseHistoryOff", ms: 2800 },
-  { action: "sceneInlineIntro", ms: 2200 },
-  { action: "inlineShowSuccess", ms: 3200 },
-  { action: "inlineShowError", ms: 2800 },
-  { action: "sceneErrorIntro", ms: 3200 },
-  { action: "emphasizeLongDisplay", ms: 3200 },
-  { action: "outro", ms: 2400 },
-];
+const FPS = 30;
+const FRAME_MS = 1000 / FPS;
 
 function runFfmpeg(args) {
   const result = spawnSync("ffmpeg", ["-y", ...args], {
@@ -71,14 +53,16 @@ async function main() {
 
   const page = await context.newPage();
   await page.goto(`file://${htmlPath}`, { waitUntil: "load" });
-  await page.waitForFunction(() => typeof window.__walkthroughApply === "function");
+  await page.waitForFunction(() => typeof window.__walkthroughTick === "function");
+  await page.evaluate(() => window.__walkthroughInit());
 
-  for (const step of TIMELINE) {
-    await page.evaluate(
-      ({ action, arg }) => window.__walkthroughApply(action, arg),
-      { action: step.action, arg: step.arg },
-    );
-    await page.waitForTimeout(step.ms);
+  const durationMs = await page.evaluate(() => window.__walkthroughDuration);
+  const totalFrames = Math.ceil(durationMs / FRAME_MS) + 1;
+
+  for (let frame = 0; frame <= totalFrames; frame += 1) {
+    const t = frame * FRAME_MS;
+    await page.evaluate((ms) => window.__walkthroughTick(ms), t);
+    await page.waitForTimeout(FRAME_MS);
   }
 
   const recordedPath = await page.video().path();
@@ -96,6 +80,8 @@ async function main() {
     "slow",
     "-crf",
     "28",
+    "-r",
+    String(FPS),
     "-pix_fmt",
     "yuv420p",
     "-movflags",
@@ -118,7 +104,7 @@ async function main() {
 
   const mp4Size = fs.statSync(mp4Path).size;
   const gifSize = fs.statSync(gifPath).size;
-  console.log(`Wrote ${path.basename(mp4Path)} (${formatBytes(mp4Size)})`);
+  console.log(`Wrote ${path.basename(mp4Path)} (${formatBytes(mp4Size)}, ~${(durationMs / 1000).toFixed(1)}s)`);
   console.log(`Wrote ${path.basename(gifPath)} (${formatBytes(gifSize)})`);
 
   if (mp4Size > 10 * 1024 * 1024) {
