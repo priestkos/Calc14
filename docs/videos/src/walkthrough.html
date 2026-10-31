@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calc14 mock-up walkthrough</title>
+  <link rel="stylesheet" href="walkthrough.css" />
+</head>
+<body>
+  <div class="walkthrough-root" id="root">
+    <div class="video-banner" id="disclaimer-banner">
+      UI mock-ups — not captures from the live FFXIV client
+    </div>
+    <div class="video-caption" id="caption"></div>
+
+    <!-- Scene 0: Main window -->
+    <div class="walkthrough-scene is-active" data-scene="main">
+      <div class="scene">
+        <div class="hud-label">Mock game view · Example Character</div>
+        <div class="imgui-window calc-window" style="top: 80px; left: 480px;">
+          <div class="imgui-titlebar">
+            <span>Calculator</span>
+            <span class="close"></span>
+          </div>
+          <div class="imgui-body">
+            <div class="display-panel">
+              <div class="sub-display" id="main-sub">200 +</div>
+              <div class="main-display size-lg" id="main-entry">10</div>
+            </div>
+            <div class="key-grid" id="main-keys">
+              <button class="key key-red" type="button">AC</button>
+              <button class="key key-red" type="button">CE</button>
+              <button class="key key-pad" type="button">⌫</button>
+              <button class="key key-orange" type="button">÷</button>
+              <button class="key key-pad" type="button">7</button>
+              <button class="key key-pad" type="button">8</button>
+              <button class="key key-pad" type="button">9</button>
+              <button class="key key-orange" type="button">×</button>
+              <button class="key key-pad" type="button">4</button>
+              <button class="key key-pad" type="button">5</button>
+              <button class="key key-pad" type="button">6</button>
+              <button class="key key-orange" type="button">−</button>
+              <button class="key key-pad" type="button">1</button>
+              <button class="key key-pad" type="button">2</button>
+              <button class="key key-pad" type="button">3</button>
+              <button class="key key-orange" type="button">+</button>
+              <button class="key key-pad" data-key="pct" type="button">%</button>
+              <button class="key key-pad" type="button">0</button>
+              <button class="key key-pad" type="button">.</button>
+              <button class="key key-orange" data-key="eq" type="button">=</button>
+            </div>
+            <div class="history-row">
+              <input id="main-history-cb" type="checkbox" checked /> History
+            </div>
+            <div class="history-panel" id="main-history-panel">
+              <ul class="history-list">
+                <li>50 × 3 = 150</li>
+                <li>200 + 10% = 220</li>
+              </ul>
+            </div>
+            <button class="btn-clear" id="main-clear" type="button">Clear History</button>
+          </div>
+        </div>
+        <div class="chat-hint"><kbd>/calc</kbd> toggles this window</div>
+      </div>
+    </div>
+
+    <!-- Scene 1: History interaction -->
+    <div class="walkthrough-scene" data-scene="history">
+      <div class="scene">
+        <div class="hud-label">Mock game view · Example Character</div>
+        <div class="imgui-window calc-window" style="top: 60px; left: 460px;">
+          <div class="imgui-titlebar">
+            <span>Calculator</span>
+            <span class="close"></span>
+          </div>
+          <div class="imgui-body">
+            <div class="display-panel">
+              <div class="sub-display"></div>
+              <div class="main-display size-lg" id="history-entry">220</div>
+            </div>
+            <div class="key-grid">
+              <button class="key key-red" type="button">AC</button>
+              <button class="key key-red" type="button">CE</button>
+              <button class="key key-pad" type="button">⌫</button>
+              <button class="key key-orange" type="button">÷</button>
+              <button class="key key-pad" type="button">7</button>
+              <button class="key key-pad" type="button">8</button>
+              <button class="key key-pad" type="button">9</button>
+              <button class="key key-orange" type="button">×</button>
+              <button class="key key-pad" type="button">4</button>
+              <button class="key key-pad" type="button">5</button>
+              <button class="key key-pad" type="button">6</button>
+              <button class="key key-orange" type="button">−</button>
+              <button class="key key-pad" type="button">1</button>
+              <button class="key key-pad" type="button">2</button>
+              <button class="key key-pad" type="button">3</button>
+              <button class="key key-orange" type="button">+</button>
+              <button class="key key-pad" type="button">%</button>
+              <button class="key key-pad" type="button">0</button>
+              <button class="key key-pad" type="button">.</button>
+              <button class="key key-orange" type="button">=</button>
+            </div>
+            <div class="history-row">
+              <input type="checkbox" checked disabled /> History
+            </div>
+            <div class="history-panel">
+              <ul class="history-list" id="history-list">
+                <li data-result="220">200 + 10% = 220</li>
+                <li data-result="225">150 × 1.5 = 225</li>
+                <li data-result="220">1000 − 780 = 220</li>
+                <li data-result="7">1+2*3 = 7</li>
+              </ul>
+            </div>
+            <button class="btn-clear" type="button">Clear History</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 2: History collapsed -->
+    <div class="walkthrough-scene" data-scene="collapsed">
+      <div class="scene">
+        <div class="hud-label">Mock game view · Example Character</div>
+        <div class="imgui-window calc-window" style="top: 120px; left: 500px;">
+          <div class="imgui-titlebar">
+            <span>Calculator</span>
+            <span class="close"></span>
+          </div>
+          <div class="imgui-body">
+            <div class="display-panel">
+              <div class="sub-display"></div>
+              <div class="main-display size-lg">0</div>
+            </div>
+            <div class="key-grid">
+              <button class="key key-red" type="button">AC</button>
+              <button class="key key-red" type="button">CE</button>
+              <button class="key key-pad" type="button">⌫</button>
+              <button class="key key-orange" type="button">÷</button>
+              <button class="key key-pad" type="button">7</button>
+              <button class="key key-pad" type="button">8</button>
+              <button class="key key-pad" type="button">9</button>
+              <button class="key key-orange" type="button">×</button>
+              <button class="key key-pad" type="button">4</button>
+              <button class="key key-pad" type="button">5</button>
+              <button class="key key-pad" type="button">6</button>
+              <button class="key key-orange" type="button">−</button>
+              <button class="key key-pad" type="button">1</button>
+              <button class="key key-pad" type="button">2</button>
+              <button class="key key-pad" type="button">3</button>
+              <button class="key key-orange" type="button">+</button>
+              <button class="key key-pad" type="button">%</button>
+              <button class="key key-pad" type="button">0</button>
+              <button class="key key-pad" type="button">.</button>
+              <button class="key key-orange" type="button">=</button>
+            </div>
+            <div class="history-row">
+              <input id="collapse-cb" type="checkbox" checked /> History
+            </div>
+            <div class="history-panel" id="collapse-panel">
+              <ul class="history-list">
+                <li>200 + 10% = 220</li>
+              </ul>
+            </div>
+            <button class="btn-clear" id="collapse-clear" type="button">Clear History</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 3: Inline /calc -->
+    <div class="walkthrough-scene" data-scene="inline">
+      <div class="scene">
+        <div class="hud-label">Mock game view · Example Character</div>
+        <div class="imgui-window log-window" style="top: 72px; left: 48px;">
+          <div class="imgui-titlebar">
+            <span>Dalamud / Plugin Log</span>
+            <span class="close"></span>
+          </div>
+          <div class="log-body">
+            <div class="log-line log-info is-hidden" id="log-success">[Info] Calc14: 1+2*3 = 7</div>
+            <div class="log-line log-error is-hidden" id="log-error">[Error] Calc14: Could not evaluate: 1/0</div>
+          </div>
+        </div>
+        <div class="chat-hint"><kbd>/calc 1+2*3</kbd> evaluates without opening the keypad</div>
+        <div class="imgui-window calc-window compact">
+          <div class="imgui-titlebar">
+            <span>Calculator</span>
+            <span class="close"></span>
+          </div>
+          <div class="imgui-body">
+            <div class="display-panel">
+              <div class="sub-display"></div>
+              <div class="main-display size-lg">0</div>
+            </div>
+            <div class="history-row">
+              <input type="checkbox" checked disabled /> History
+            </div>
+            <div class="history-panel">
+              <ul class="history-list" id="inline-history">
+                <li class="is-hidden" id="inline-history-line">1+2*3 = 7</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 4: Error & long display -->
+    <div class="walkthrough-scene" data-scene="error">
+      <div class="scene">
+        <div class="hud-label">Mock game view · Example Character</div>
+        <div class="imgui-window calc-window" id="error-window" style="top: 48px; left: 320px;">
+          <div class="imgui-titlebar">
+            <span>Calculator</span>
+            <span class="close"></span>
+          </div>
+          <div class="imgui-body">
+            <div class="display-panel">
+              <div class="sub-display">100 ÷</div>
+              <div class="main-display size-lg" style="color: #ff9990;">Error</div>
+            </div>
+            <div class="key-grid">
+              <button class="key key-red" type="button">AC</button>
+              <button class="key key-red" type="button">CE</button>
+              <button class="key key-pad" type="button">⌫</button>
+              <button class="key key-orange" type="button">÷</button>
+              <button class="key key-pad" type="button">7</button>
+              <button class="key key-pad" type="button">8</button>
+              <button class="key key-pad" type="button">9</button>
+              <button class="key key-orange" type="button">×</button>
+              <button class="key key-pad" type="button">4</button>
+              <button class="key key-pad" type="button">5</button>
+              <button class="key key-pad" type="button">6</button>
+              <button class="key key-orange" type="button">−</button>
+              <button class="key key-pad" type="button">1</button>
+              <button class="key key-pad" type="button">2</button>
+              <button class="key key-pad" type="button">3</button>
+              <button class="key key-orange" type="button">+</button>
+              <button class="key key-pad" type="button">%</button>
+              <button class="key key-pad" type="button">0</button>
+              <button class="key key-pad" type="button">.</button>
+              <button class="key key-orange" type="button">=</button>
+            </div>
+            <div class="history-row">
+              <input type="checkbox" checked disabled /> History
+            </div>
+            <div class="history-panel empty">No calculations yet.</div>
+            <button class="btn-clear" type="button">Clear History</button>
+          </div>
+        </div>
+        <div class="imgui-window calc-window" id="long-window" style="top: 48px; left: 680px; opacity: 0.35;">
+          <div class="imgui-titlebar">
+            <span>Calculator</span>
+            <span class="close"></span>
+          </div>
+          <div class="imgui-body">
+            <div class="display-panel">
+              <div class="sub-display"></div>
+              <div class="main-display size-sm">123456789012345</div>
+            </div>
+            <div class="key-grid">
+              <button class="key key-red" type="button">AC</button>
+              <button class="key key-red" type="button">CE</button>
+              <button class="key key-pad" type="button">⌫</button>
+              <button class="key key-orange" type="button">÷</button>
+              <button class="key key-pad" type="button">7</button>
+              <button class="key key-pad" type="button">8</button>
+              <button class="key key-pad" type="button">9</button>
+              <button class="key key-orange" type="button">×</button>
+              <button class="key key-pad" type="button">4</button>
+              <button class="key key-pad" type="button">5</button>
+              <button class="key key-pad" type="button">6</button>
+              <button class="key key-orange" type="button">−</button>
+              <button class="key key-pad" type="button">1</button>
+              <button class="key key-pad" type="button">2</button>
+              <button class="key key-pad" type="button">3</button>
+              <button class="key key-orange" type="button">+</button>
+              <button class="key key-pad" type="button">%</button>
+              <button class="key key-pad" type="button">0</button>
+              <button class="key key-pad" type="button">.</button>
+              <button class="key key-orange" type="button">=</button>
+            </div>
+            <div class="history-row">
+              <input type="checkbox" checked disabled /> History
+            </div>
+            <div class="history-panel empty">No calculations yet.</div>
+            <button class="btn-clear" type="button">Clear History</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="walkthrough.js"></script>
+</body>
+</html>

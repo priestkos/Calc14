@@ -34,6 +34,14 @@ Screenshots are mock-ups illustrating the UI, not captures from the live game.
 
 Mock-up sources live under `docs/screenshots/src/`; regenerate PNGs with `npm install && npm run render` in `docs/screenshots/`.
 
+### Mock-up video
+
+Walkthrough of the same UI mock-ups (not in-game footage):
+
+![Calc14 mock-up walkthrough preview](docs/videos/mockup-walkthrough.gif)
+
+[Full walkthrough (MP4)](docs/videos/mockup-walkthrough.mp4) · Regenerate with `npm install && npm run render` in `docs/videos/`.
+
 ## What it does
 
 - **Calculator window** — five rows of 60 px keys (AC, CE, backspace, four operators, `%`, `.`, `=`), a right-aligned result that shrinks its font as it grows, and a collapsible history pane; auto-resizing, 320 px wide.
