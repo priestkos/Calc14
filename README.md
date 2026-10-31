@@ -1,5 +1,7 @@
 # Calc14
 
+<img src="images/icon.png" width="96">
+
 A keypad calculator that opens over FFXIV, with a 100-entry history and inline expression evaluation from chat.
 
 `/calc` · Dalamud API 15 · .NET 10
