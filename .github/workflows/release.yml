@@ -98,11 +98,13 @@ jobs:
             'skip=true' >> $env:GITHUB_OUTPUT
             exit 0
           }
+          $global:LASTEXITCODE = 0
 
           Write-Host "Next automatic release version: $nextVersion (tag $tag)"
           "version=$nextVersion" >> $env:GITHUB_OUTPUT
           "tag=$tag" >> $env:GITHUB_OUTPUT
           'skip=false' >> $env:GITHUB_OUTPUT
+          exit 0
 
       - name: Set up .NET
         if: steps.auto.outputs.skip != 'true'
@@ -118,6 +120,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path $dest | Out-Null
           Invoke-WebRequest -UseBasicParsing -Uri 'https://goatcorp.github.io/dalamud-distrib/latest.zip' -OutFile dalamud.zip
           Expand-Archive -Path dalamud.zip -DestinationPath $dest -Force
+          exit 0
 
       - name: Build Calc14
         if: steps.auto.outputs.skip != 'true'
@@ -203,5 +206,8 @@ jobs:
               Write-Host "Release $tag already exists; skipping."
               exit 0
             }
+            $global:LASTEXITCODE = 0
             gh release create $tag latest.zip --title $tag --generate-notes
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            exit 0
           }
