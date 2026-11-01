@@ -17,17 +17,6 @@ public sealed class CalculatorWindow : Window, IDisposable
     private string subDisplay = string.Empty;
     private bool showHistory = true;
 
-    // Theme: warm ember palette
-    private static readonly Vector4 Panel = new(0.14f, 0.08f, 0.06f, 0.95f);
-    private static readonly Vector4 AccentOrange = new(0.95f, 0.45f, 0.10f, 1f);
-    private static readonly Vector4 AccentOrangeHover = new(1f, 0.55f, 0.20f, 1f);
-    private static readonly Vector4 AccentRed = new(0.72f, 0.16f, 0.12f, 1f);
-    private static readonly Vector4 AccentRedHover = new(0.86f, 0.24f, 0.18f, 1f);
-    private static readonly Vector4 KeyPad = new(0.20f, 0.13f, 0.10f, 1f);
-    private static readonly Vector4 KeyPadHover = new(0.28f, 0.18f, 0.13f, 1f);
-    private static readonly Vector4 TextWarm = new(1f, 0.92f, 0.85f, 1f);
-    private static readonly Vector4 TextDim = new(0.75f, 0.62f, 0.52f, 1f);
-
     public CalculatorWindow() : base("Calculator##Calc14")
     {
         Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse |
@@ -91,97 +80,76 @@ public sealed class CalculatorWindow : Window, IDisposable
 
     public override void Draw()
     {
-        // Keep style pushes alive for the whole frame (not just DrawTheme()).
-        using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, new Vector2(10, 10) * ImGuiHelpers.GlobalScale);
-        using var round = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 8 * ImGuiHelpers.GlobalScale);
-        using var border = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0);
-
         // ---- display ----
-        using (ImRaii.PushColor(ImGuiCol.ChildBg, Panel))
-        using (var _ = ImRaii.Child("##display", new Vector2(0, 74 * ImGuiHelpers.GlobalScale), false))
-        {
-            if (subDisplay.Length > 0)
-            {
-                using (ImRaii.PushColor(ImGuiCol.Text, TextDim))
-                    ImGui.TextUnformatted(subDisplay);
-            }
-            else
-            {
-                ImGui.Dummy(new Vector2(0, ImGui.GetTextLineHeight()));
-            }
+        if (subDisplay.Length > 0)
+            ImGui.TextUnformatted(subDisplay);
+        else
+            ImGui.Dummy(new Vector2(0, ImGui.GetTextLineHeight()));
 
-            // right-aligned big result, auto-shrink font if too long
-            var scale = display.Length > 14 ? 0.8f : display.Length > 9 ? 1.2f : 1.6f;
-            ImGui.SetWindowFontScale(scale);
-            using (ImRaii.PushColor(ImGuiCol.Text, TextWarm))
-            {
-                var w = ImGui.GetContentRegionAvail().X;
-                var tw = ImGui.CalcTextSize(display).X;
-                ImGui.SetCursorPosX(MathF.Max(0, w - tw));
-                ImGui.TextUnformatted(display);
-            }
-            ImGui.SetWindowFontScale(1f);
-        }
+        // right-aligned result, auto-shrink font if too long
+        var scale = display.Length > 14 ? 0.8f : display.Length > 9 ? 1.2f : 1.6f;
+        ImGui.SetWindowFontScale(scale);
+        var w = ImGui.GetContentRegionAvail().X;
+        var tw = ImGui.CalcTextSize(display).X;
+        ImGui.SetCursorPosX(MathF.Max(0, w - tw));
+        ImGui.TextUnformatted(display);
+        ImGui.SetWindowFontScale(1f);
 
         ImGui.Spacing();
 
         // ---- button grid ----
         var bs = 60 * ImGuiHelpers.GlobalScale; // button size
 
-        void Key(string label, Vector4 color, Vector4 hover, Action action)
+        void Key(string label, Action action)
         {
-            using var c = ImRaii.PushColor(ImGuiCol.Button, color);
-            using var h = ImRaii.PushColor(ImGuiCol.ButtonHovered, hover);
-            using var p = ImRaii.PushColor(ImGuiCol.ButtonActive, hover);
-            using var t = ImRaii.PushColor(ImGuiCol.Text, TextWarm);
-            if (ImGui.Button(label, new Vector2(bs, bs)) && action != null) action();
+            if (ImGui.Button(label, new Vector2(bs, bs))) action();
         }
 
         // Row 1: AC, CE, ⌫, ÷
-        Key("AC", AccentRed, AccentRedHover, () => { calc.ClearAll(); display = "0"; subDisplay = string.Empty; });
+        Key("AC", () => { calc.ClearAll(); display = "0"; subDisplay = string.Empty; });
         ImGui.SameLine();
         // CE clears the entry only; keep subDisplay so the pending op remains visible.
-        Key("CE", AccentRed, AccentRedHover, () => { calc.Clear(); display = "0"; });
+        Key("CE", () => { calc.Clear(); display = "0"; });
         ImGui.SameLine();
-        Key("\u232b", KeyPad, KeyPadHover, () => { calc.Backspace(); display = calc.Entry; });
+        Key("\u232b", () => { calc.Backspace(); display = calc.Entry; });
         ImGui.SameLine();
-        Key("\u00f7", AccentOrange, AccentOrangeHover, () => ApplyOp(CalculatorState.Op.Div, '\u00f7'));
+        Key("\u00f7", () => ApplyOp(CalculatorState.Op.Div, '\u00f7'));
 
         // Row 2: 7 8 9 ×
-        Key("7", KeyPad, KeyPadHover, () => { calc.Digit('7'); display = calc.Entry; });
+        Key("7", () => { calc.Digit('7'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("8", KeyPad, KeyPadHover, () => { calc.Digit('8'); display = calc.Entry; });
+        Key("8", () => { calc.Digit('8'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("9", KeyPad, KeyPadHover, () => { calc.Digit('9'); display = calc.Entry; });
+        Key("9", () => { calc.Digit('9'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("\u00d7", AccentOrange, AccentOrangeHover, () => ApplyOp(CalculatorState.Op.Mul, '\u00d7'));
+        Key("\u00d7", () => ApplyOp(CalculatorState.Op.Mul, '\u00d7'));
 
         // Row 3: 4 5 6 −
-        Key("4", KeyPad, KeyPadHover, () => { calc.Digit('4'); display = calc.Entry; });
+        Key("4", () => { calc.Digit('4'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("5", KeyPad, KeyPadHover, () => { calc.Digit('5'); display = calc.Entry; });
+        Key("5", () => { calc.Digit('5'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("6", KeyPad, KeyPadHover, () => { calc.Digit('6'); display = calc.Entry; });
+        Key("6", () => { calc.Digit('6'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("\u2212", AccentOrange, AccentOrangeHover, () => ApplyOp(CalculatorState.Op.Sub, '\u2212'));
+        Key("\u2212", () => ApplyOp(CalculatorState.Op.Sub, '\u2212'));
 
         // Row 4: 1 2 3 +
-        Key("1", KeyPad, KeyPadHover, () => { calc.Digit('1'); display = calc.Entry; });
+        Key("1", () => { calc.Digit('1'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("2", KeyPad, KeyPadHover, () => { calc.Digit('2'); display = calc.Entry; });
+        Key("2", () => { calc.Digit('2'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("3", KeyPad, KeyPadHover, () => { calc.Digit('3'); display = calc.Entry; });
+        Key("3", () => { calc.Digit('3'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("+", AccentOrange, AccentOrangeHover, () => ApplyOp(CalculatorState.Op.Add, '+'));
+        Key("+", () => ApplyOp(CalculatorState.Op.Add, '+'));
 
         // Row 5: %, 0, ., =
-        Key("%", KeyPad, KeyPadHover, () => { calc.Percent(); display = calc.Entry; });
+        Key("%", () => { calc.Percent(); display = calc.Entry; });
         ImGui.SameLine();
-        Key("0", KeyPad, KeyPadHover, () => { calc.Digit('0'); display = calc.Entry; });
+        Key("0", () => { calc.Digit('0'); display = calc.Entry; });
         ImGui.SameLine();
-        Key(".", KeyPad, KeyPadHover, () => { calc.Digit('.'); display = calc.Entry; });
+        Key(".", () => { calc.Digit('.'); display = calc.Entry; });
         ImGui.SameLine();
-        Key("=", AccentOrange, AccentOrangeHover, Equals);
+        Key("=", Equals);
 
         // ---- history ----
         ImGui.Spacing();
@@ -189,32 +157,27 @@ public sealed class CalculatorWindow : Window, IDisposable
 
         if (showHistory)
         {
-            using (ImRaii.PushColor(ImGuiCol.ChildBg, Panel))
             using (var _ = ImRaii.Child("##history", new Vector2(0, 130 * ImGuiHelpers.GlobalScale), true))
             {
                 if (history.Count == 0)
                 {
-                    using (ImRaii.PushColor(ImGuiCol.Text, TextDim))
-                        ImGui.TextUnformatted("No calculations yet.");
+                    ImGui.TextDisabled("No calculations yet.");
                 }
                 else
                 {
-                    using (ImRaii.PushColor(ImGuiCol.Text, TextWarm))
+                    for (var i = 0; i < history.Count; i++)
                     {
-                        for (var i = 0; i < history.Count; i++)
+                        if (ImGui.Selectable($"{history[i]}##hist{i}"))
                         {
-                            if (ImGui.Selectable($"{history[i]}##hist{i}"))
+                            // clicking a result loads it as the current entry
+                            var idx = history[i].LastIndexOf(" = ", StringComparison.Ordinal);
+                            if (idx >= 0)
                             {
-                                // clicking a result loads it as the current entry
-                                var idx = history[i].LastIndexOf(" = ", StringComparison.Ordinal);
-                                if (idx >= 0)
-                                {
-                                    var val = history[i][(idx + 3)..];
-                                    LoadEntry(val);
-                                }
+                                var val = history[i][(idx + 3)..];
+                                LoadEntry(val);
                             }
-                            if (i > 0) ImGui.Separator();
                         }
+                        if (i > 0) ImGui.Separator();
                     }
                 }
             }
