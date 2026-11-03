@@ -167,6 +167,7 @@ public sealed class CalculatorWindow : Window, IDisposable
                 {
                     for (var i = 0; i < history.Count; i++)
                     {
+                        if (i > 0) ImGui.Separator();
                         if (ImGui.Selectable($"{history[i]}##hist{i}"))
                         {
                             // clicking a result loads it as the current entry
@@ -177,7 +178,6 @@ public sealed class CalculatorWindow : Window, IDisposable
                                 LoadEntry(val);
                             }
                         }
-                        if (i > 0) ImGui.Separator();
                     }
                 }
             }
