@@ -185,6 +185,8 @@ jobs:
           if ($env:EVENT_NAME -eq 'push' -and $env:REF_NAME -like 'v*') {
             $tag = $env:REF_NAME
             $tagVersion = $tag.Substring(1)
+            # AssemblyVersion is always four-part (v1.0.1 -> 1.0.1.0)
+            while ($tagVersion.Split('.').Count -lt 4) { $tagVersion += '.0' }
             if ($tagVersion -ne $version) {
               throw "Tag '$tag' (version '$tagVersion') does not match AssemblyVersion '$version'"
             }

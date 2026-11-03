@@ -48,4 +48,4 @@ jobs:
             8.0.x
 
       - name: Run the unit tests
-        run: dotnet run --project Calc14.Tests/Calc14.Tests.csproj -c Release
+        run: dotnet test Calc14.Tests/Calc14.Tests.csproj -c Release
