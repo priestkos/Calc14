@@ -154,4 +154,58 @@ public class CalculatorStateTests
         calc.Digit('7');
         Assert.Equal("42", calc.Equals_());
     }
+
+    private static CalculatorState TinyPercent()
+    {
+        var calc = new CalculatorState();
+        foreach (var c in "0.000000001") calc.Digit(c); // typed, so the entry is still editable
+        calc.Percent();
+        Assert.Equal("1E-11", calc.Entry);
+        return calc;
+    }
+
+    [Fact]
+    public void Digit_after_percent_starts_new_entry()
+    {
+        var calc = TinyPercent();
+        calc.Digit('5');
+        Assert.Equal("5", calc.Entry);
+    }
+
+    [Fact]
+    public void Dot_after_percent_starts_new_entry()
+    {
+        var calc = TinyPercent();
+        calc.Digit('.');
+        Assert.Equal("0.", calc.Entry);
+    }
+
+    [Fact]
+    public void Backspace_after_percent_does_not_edit_result()
+    {
+        var calc = TinyPercent();
+        calc.Backspace();
+        Assert.Equal("1E-11", calc.Entry);
+    }
+
+    [Fact]
+    public void Percent_result_still_used_as_operand_by_next_op()
+    {
+        var calc = new CalculatorState();
+        calc.Digit('2'); calc.Digit('0'); calc.Digit('0');
+        calc.SetOp(CalculatorState.Op.Add);
+        calc.Digit('1'); calc.Digit('0');
+        calc.Percent();
+        calc.SetOp(CalculatorState.Op.Add);
+        calc.Digit('5');
+        Assert.Equal("225", calc.Equals_());
+    }
+
+    [Fact]
+    public void Evaluate_non_finite_returns_null()
+    {
+        var huge = new string('9', 400); // parses to +Infinity
+        Assert.Null(CalculatorState.Evaluate(huge));
+        Assert.Null(CalculatorState.Evaluate(huge + "*0")); // Infinity * 0 = NaN
+    }
 }

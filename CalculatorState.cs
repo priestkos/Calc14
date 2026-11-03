@@ -14,6 +14,7 @@ public sealed class CalculatorState
     private Op pendingOp = Op.None;
     private double accumulator;
     private bool freshEntry = true;   // next digit starts a new entry
+    private bool percentResult;       // entry is a % result: typing replaces it, but it still counts as an operand for SetOp
 
     public string Entry => entry;
     public bool HasPending => pendingOp != Op.None;
@@ -57,10 +58,11 @@ public sealed class CalculatorState
         if (c != '.' && (c < '0' || c > '9'))
             return;
 
-        if (freshEntry || entry == "0" && !entry.Contains('.'))
+        if (freshEntry || percentResult || entry == "0" && !entry.Contains('.'))
         {
             entry = c == '.' ? "0." : c.ToString();
             freshEntry = false;
+            percentResult = false;
             return;
         }
 
@@ -89,7 +91,7 @@ public sealed class CalculatorState
 
     public void Backspace()
     {
-        if (freshEntry) return;
+        if (freshEntry || percentResult) return;
         entry = entry.Length <= 1 ? "0" : entry[..^1];
         if (entry is "" or "-") entry = "0";
     }
@@ -111,6 +113,7 @@ public sealed class CalculatorState
         {
             entry = Format(v / 100.0);
         }
+        percentResult = true;
     }
 
     /// <summary>Sets the pending operation and folds the previous one in (immediate execution).</summary>
@@ -202,7 +205,7 @@ public sealed class CalculatorState
         return tokens.Count > 0;
     }
 
-    /// <summary>Shunting-yard evaluation of a plain + - * / expression. Null on parse error or divide by zero.</summary>
+    /// <summary>Shunting-yard evaluation of a plain + - * / expression. Null on parse error, divide by zero or a non-finite result.</summary>
     public static double? Evaluate(string expression)
     {
         if (!TryTokenize(expression, out var tokens)) return null;
@@ -251,6 +254,8 @@ public sealed class CalculatorState
             }, a, b));
         }
 
-        return st.Count == 1 ? st.Pop() : null;
+        if (st.Count != 1) return null;
+        var result = st.Pop();
+        return double.IsFinite(result) ? result : null;
     }
 }
