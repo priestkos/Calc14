@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 /**
  * Record Calc14 mock-up walkthrough (1280×720 @ 30fps) and export MP4 + GIF.
- * Frame-driven timeline for smooth cursor motion and transitions.
+ * Frame-driven timeline for exact duration and smooth cursor motion.
  */
 import { chromium } from "playwright";
 import { spawnSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { mkdir, rm } from "node:fs/promises";
 
 const srcDir = path.dirname(fileURLToPath(import.meta.url));
 const videosDir = path.join(srcDir, "..");
+const framesDir = path.join(srcDir, "frames");
 const htmlPath = path.join(srcDir, "walkthrough.html");
-const webmPath = path.join(videosDir, ".walkthrough-record.webm");
-const mp4Path = path.join(videosDir, "mockup-walkthrough.mp4");
-const gifPath = path.join(videosDir, "mockup-walkthrough.gif");
 
 const FPS = 30;
-const FRAME_MS = 1000 / FPS;
+const DURATION_SEC = 15;
+const FRAME_COUNT = FPS * DURATION_SEC;
 
 function runFfmpeg(args) {
   const result = spawnSync("ffmpeg", ["-y", ...args], {
@@ -35,53 +35,44 @@ function formatBytes(n) {
 }
 
 async function main() {
-  if (fs.existsSync(webmPath)) fs.unlinkSync(webmPath);
+  await rm(framesDir, { recursive: true, force: true });
+  await mkdir(framesDir, { recursive: true });
+
+  const mp4Path = path.join(videosDir, "mockup-walkthrough.mp4");
+  const gifPath = path.join(videosDir, "mockup-walkthrough.gif");
 
   const browser = await chromium.launch({
     headless: true,
     args: ["--font-render-hinting=none"],
   });
 
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 720 },
-    deviceScaleFactor: 1,
-    recordVideo: {
-      dir: videosDir,
-      size: { width: 1280, height: 720 },
-    },
-  });
-
-  const page = await context.newPage();
+  const page = await browser.newPage();
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto(`file://${htmlPath}`, { waitUntil: "load" });
   await page.waitForFunction(() => typeof window.__walkthroughTick === "function");
   await page.evaluate(() => window.__walkthroughInit());
 
-  const durationMs = await page.evaluate(() => window.__walkthroughDuration);
-  const totalFrames = Math.ceil(durationMs / FRAME_MS) + 1;
-
-  for (let frame = 0; frame <= totalFrames; frame += 1) {
-    const t = frame * FRAME_MS;
+  for (let i = 0; i < FRAME_COUNT; i += 1) {
+    const t = (i / FPS) * 1000;
     await page.evaluate((ms) => window.__walkthroughTick(ms), t);
-    await page.waitForTimeout(FRAME_MS);
+    const name = `frame-${String(i).padStart(5, "0")}.png`;
+    await page.screenshot({ path: path.join(framesDir, name), type: "png" });
+    if (i % 90 === 0) console.log(`Frame ${i}/${FRAME_COUNT}`);
   }
 
-  const recordedPath = await page.video().path();
-  await context.close();
   await browser.close();
 
-  fs.renameSync(recordedPath, webmPath);
-
   runFfmpeg([
+    "-framerate",
+    String(FPS),
     "-i",
-    webmPath,
+    path.join(framesDir, "frame-%05d.png"),
     "-c:v",
     "libx264",
     "-preset",
     "slow",
     "-crf",
     "28",
-    "-r",
-    String(FPS),
     "-pix_fmt",
     "yuv420p",
     "-movflags",
@@ -100,11 +91,13 @@ async function main() {
     gifPath,
   ]);
 
-  fs.unlinkSync(webmPath);
+  await rm(framesDir, { recursive: true, force: true });
 
   const mp4Size = fs.statSync(mp4Path).size;
   const gifSize = fs.statSync(gifPath).size;
-  console.log(`Wrote ${path.basename(mp4Path)} (${formatBytes(mp4Size)}, ~${(durationMs / 1000).toFixed(1)}s)`);
+  console.log(
+    `Wrote ${path.basename(mp4Path)} (${formatBytes(mp4Size)}, ${DURATION_SEC}s)`,
+  );
   console.log(`Wrote ${path.basename(gifPath)} (${formatBytes(gifSize)})`);
 
   if (mp4Size > 10 * 1024 * 1024) {

@@ -38,7 +38,7 @@ Screenshots are mock-ups illustrating the UI, not captures from the live game.
 
 ### Mock-up video
 
-Walkthrough of the same UI mock-ups (not in-game footage):
+Walkthrough of the same UI mock-ups (~15 s, 1280×720; not in-game footage):
 
 ![Calc14 mock-up walkthrough preview](docs/videos/mockup-walkthrough.gif)
 

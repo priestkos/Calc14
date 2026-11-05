@@ -29,11 +29,10 @@ function centerOf(el, rootRect) {
 }
 
 const state = {
-  bannerHidden: false,
   activeScene: "main",
   prevScene: "main",
   sceneBlendStart: 0,
-  sceneBlendDur: 450,
+  sceneBlendDur: 380,
   caption: "",
   captionFadeStart: null,
   cursor: { x: 640, y: 380, visible: false },
@@ -68,9 +67,7 @@ function setCaption(text, t) {
 }
 
 function resetDom() {
-  $("disclaimer-banner").classList.remove("is-hidden");
-  state.bannerHidden = false;
-  setCaption("Calc14 UI mock-up walkthrough", 0);
+  setCaption("Main window — /calc toggles keypad, pending op, and history", 0);
 
   $("main-entry").textContent = "10";
   $("main-sub").textContent = "200 +";
@@ -190,15 +187,6 @@ function applySceneStyles(t) {
   });
 }
 
-function applyBanner(t) {
-  const banner = $("disclaimer-banner");
-  if (state.bannerHidden) {
-    banner.classList.add("is-hidden");
-  } else {
-    banner.classList.remove("is-hidden");
-  }
-}
-
 function applyCursorDom(t) {
   const cursor = $("cursor");
   cursor.classList.toggle("is-visible", state.cursor.visible);
@@ -280,7 +268,10 @@ function applyEqualsResult() {
   $("main-sub").textContent = "";
 }
 
-/** Build scripted timeline (absolute ms) */
+/** Fixed walkthrough length (ms) — must match DURATION_SEC in render.mjs */
+const WALKTHROUGH_DURATION_MS = 15000;
+
+/** Build scripted timeline (absolute ms) — ~15 s, five beats */
 function buildSchedule() {
   SCHEDULE.length = 0;
   let at = 0;
@@ -294,39 +285,26 @@ function buildSchedule() {
     state.cursor.y = 400;
   });
 
-  at += 2600;
-  schedule(at, (t) => {
-    state.bannerHidden = true;
-    applyBanner(t);
-  });
-
-  at += 700;
-  schedule(at, (t) => {
-    goScene("main", t);
-    setCaption("Main window — keypad, pending operation, and history", t);
-  });
-
-  /** Cursor: drift to % key */
-  const pctMoveStart = at + 900;
+  const pctMoveStart = at + 700;
   const pctEl = () => document.querySelector('[data-scene="main"] [data-key="pct"]');
   schedule(pctMoveStart, (t) => {
-    state.pendingMove = beginCursorMove(680, 420, pctEl(), t, 750);
+    state.pendingMove = beginCursorMove(680, 420, pctEl(), t, 420);
   });
 
-  const pctClick = pctMoveStart + 820;
+  const pctClick = pctMoveStart + 460;
   schedule(pctClick, (t) => {
     simulateClick(pctEl(), t);
     state.mainPctHighlight = true;
-    setCaption("% after +/− applies percent of the accumulator (200 + 10%)", t);
+    setCaption("% after +/− — percent of accumulator (200 + 10%)", t);
   });
 
-  const eqMoveStart = pctClick + 1100;
+  const eqMoveStart = pctClick + 520;
   const eqEl = () => document.querySelector('[data-scene="main"] [data-key="eq"]');
   schedule(eqMoveStart, (t) => {
-    state.pendingMove = beginCursorMove(state.cursor.x, state.cursor.y, eqEl(), t, 650);
+    state.pendingMove = beginCursorMove(state.cursor.x, state.cursor.y, eqEl(), t, 380);
   });
 
-  const eqClick = eqMoveStart + 700;
+  const eqClick = eqMoveStart + 400;
   schedule(eqClick, (t) => {
     simulateClick(eqEl(), t);
     state.mainPctHighlight = false;
@@ -335,71 +313,50 @@ function buildSchedule() {
     setCaption("Keypad — AC, CE, operators, digits, %, and =", t);
   });
 
-  at = eqClick + 2400;
+  at = 2800;
   schedule(at, (t) => {
     goScene("history", t);
-    setCaption("History — click a line to load its result", t);
+    setCaption("History — click a line to load its result into the display", t);
   });
 
-  at += 1100;
+  at += 520;
   const histItems = () => [...document.querySelectorAll("#history-list li")];
-  const clickHistory = (index, moveStart) => {
-    schedule(moveStart, (t) => {
-      const el = histItems()[index];
-      state.cursor.visible = true;
-      state.pendingMove = beginCursorMove(
-        state.cursor.visible ? state.cursor.x : 600,
-        state.cursor.visible ? state.cursor.y : 350,
-        el,
-        t,
-        600,
-      );
-    });
-    schedule(moveStart + 620, (t) => {
-      const el = histItems()[index];
-      simulateClick(el, t);
-      state.historySelected = index;
-      applyHistorySelection();
-      setCaption("History — click a line to load its result", t);
-    });
-  };
+  schedule(at, (t) => {
+    const el = histItems()[1];
+    state.pendingMove = beginCursorMove(600, 350, el, t, 420);
+  });
+  schedule(at + 440, (t) => {
+    simulateClick(histItems()[1], t);
+    state.historySelected = 1;
+    applyHistorySelection();
+  });
 
-  clickHistory(1, at);
-  at += 2200;
-  clickHistory(2, at);
-
-  at += 2400;
+  at = 5800;
   schedule(at, (t) => {
     state.cursor.visible = false;
     goScene("collapsed", t);
     setCaption("Collapsible history — uncheck History to hide the pane", t);
   });
 
-  at += 1200;
+  at += 520;
   const cbEl = () => $("collapse-cb");
   schedule(at, (t) => {
-    state.pendingMove = beginCursorMove(
-      state.cursor.visible ? state.cursor.x : 640,
-      state.cursor.visible ? state.cursor.y : 380,
-      cbEl(),
-      t,
-      700,
-    );
+    state.pendingMove = beginCursorMove(640, 380, cbEl(), t, 420);
   });
-  schedule(at + 740, (t) => {
+  schedule(at + 440, (t) => {
     simulateClick(cbEl(), t);
     state.collapseHidden = true;
     applyCollapse();
   });
 
-  at += 2600;
+  at = 8600;
   schedule(at, (t) => {
     state.cursor.visible = false;
     goScene("inline", t);
     setCaption("Inline /calc <expr> — evaluates without the keypad", t);
   });
 
-  at += 1400;
+  at += 480;
   schedule(at, (t) => {
     $("inline-chat-hint")?.classList.add("is-pulse");
     state.inlineSuccess = true;
@@ -407,34 +364,28 @@ function buildSchedule() {
     setCaption("Success logs expr = result and prepends the same line to history", t);
   });
 
-  at += 3200;
+  at += 1100;
   schedule(at, (t) => {
     state.inlineError = true;
     applyInline();
     setCaption("Invalid expressions log Could not evaluate (no history entry)", t);
   });
 
-  at += 2800;
+  at = 11200;
   schedule(at, (t) => {
     state.cursor.visible = false;
     goScene("error", t);
     setCaption("Divide-by-zero shows Error; empty history shows No calculations yet.", t);
   });
 
-  at += 3400;
+  at += 1200;
   schedule(at, (t) => {
     state.longEmphasis = true;
     applyErrorScene();
     setCaption("Long entries shrink the display font (17-digit cap)", t);
   });
 
-  at += 3200;
-  schedule(at, (t) => {
-    state.cursor.visible = false;
-    setCaption("Mock-ups only — behaviour described in README and tests", t);
-  });
-
-  return at + 2600;
+  return WALKTHROUGH_DURATION_MS;
 }
 
 const DURATION_MS = buildSchedule();
@@ -454,7 +405,6 @@ function tick(t) {
   }
 
   applySceneStyles(t);
-  applyBanner(t);
   applyMainHighlights();
   applyHistorySelection();
   applyCollapse();
