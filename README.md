@@ -15,7 +15,7 @@ Screenshots are mock-ups illustrating the UI, not captures from the live game.
 | | |
 | --- | --- |
 | ![Calculator window with keypad, pending operation, and history](docs/screenshots/01-main-window-keypad.png) | **Main window** — `Calculator` title bar, sub-display (`200 +`), entry display, full 60 px keypad (AC, CE, ⌫, ÷, digits, ×, −, +, `%`, `.`, `=`), **History** checkbox (default on), and **Clear History**. |
-| ![History list with a selected line](docs/screenshots/02-history-interaction.png) | **History** — newest-first lines (e.g. `200 + 10% = 220`); click a row to load its result; **Clear History** empties the log. |
+| ![History list with a selected line](docs/screenshots/02-history-interaction.png) | **History** — newest-first lines (e.g. `200 + 20 = 220`); click a row to load its result; **Clear History** empties the log. |
 | ![History checkbox off hides the pane](docs/screenshots/03-history-collapsed-empty.png) | **Collapsible history** — uncheck **History** to hide the list and **Clear History** button. |
 | ![Plugin log and history from /calc expression](docs/screenshots/04-inline-calc-expression.png) | **Inline `/calc <expr>`** — evaluates without the keypad; success logs `expr = result` via `Log.Info` and prepends the same line to history; invalid input logs `Could not evaluate`. |
 | ![Error state and long entry display](docs/screenshots/05-error-long-display.png) | **Error & display scaling** — divide-by-zero shows **Error** (empty history shows **No calculations yet.**); long entries shrink the result font (17-digit entry cap). |

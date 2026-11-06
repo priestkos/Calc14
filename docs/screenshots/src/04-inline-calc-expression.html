@@ -4,12 +4,6 @@
   <meta charset="UTF-8" />
   <title>Calc14 mock — /calc expression</title>
   <link rel="stylesheet" href="imgui-calc14.css" />
-  <style>
-    .calc-window.compact { width: 320px; top: 380px; left: 780px; }
-    .calc-window.compact .history-panel { height: 72px; }
-    .calc-window.compact .key-grid { display: none; }
-    .calc-window.compact .display-panel { min-height: 48px; }
-  </style>
 </head>
 <body>
   <div class="scene">
@@ -27,7 +21,7 @@
       </div>
     </div>
     <div class="chat-hint"><kbd>/calc 1+2*3</kbd> evaluates without opening the keypad</div>
-    <div class="imgui-window calc-window compact" style="top: 380px; left: 780px;">
+    <div class="imgui-window calc-window" style="top: 56px; left: 860px;">
       <div class="imgui-titlebar">
         <span>Calculator</span>
         <span class="close"></span>
@@ -37,6 +31,28 @@
           <div class="sub-display"></div>
           <div class="main-display size-lg">0</div>
         </div>
+        <div class="key-grid">
+          <button class="key key-red" type="button">AC</button>
+          <button class="key key-red" type="button">CE</button>
+          <button class="key key-pad" type="button">⌫</button>
+          <button class="key key-orange" type="button">÷</button>
+          <button class="key key-pad" type="button">7</button>
+          <button class="key key-pad" type="button">8</button>
+          <button class="key key-pad" type="button">9</button>
+          <button class="key key-orange" type="button">×</button>
+          <button class="key key-pad" type="button">4</button>
+          <button class="key key-pad" type="button">5</button>
+          <button class="key key-pad" type="button">6</button>
+          <button class="key key-orange" type="button">−</button>
+          <button class="key key-pad" type="button">1</button>
+          <button class="key key-pad" type="button">2</button>
+          <button class="key key-pad" type="button">3</button>
+          <button class="key key-orange" type="button">+</button>
+          <button class="key key-pad" type="button">%</button>
+          <button class="key key-pad" type="button">0</button>
+          <button class="key key-pad" type="button">.</button>
+          <button class="key key-orange" type="button">=</button>
+        </div>
         <div class="history-row">
           <input type="checkbox" checked disabled /> History
         </div>
@@ -45,6 +61,7 @@
             <li>1+2*3 = 7</li>
           </ul>
         </div>
+        <button class="btn-clear" type="button">Clear History</button>
       </div>
     </div>
     <p class="callout" style="top: 240px; left: 48px; max-width: 360px;">Successful <kbd>/calc &lt;expr&gt;</kbd> writes <code>expr = result</code> to the plugin log and prepends the same line to history (window may stay closed).</p>

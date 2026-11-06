@@ -96,21 +96,6 @@
   outline-offset: 2px;
 }
 
-.calc-window.compact {
-  width: 320px;
-  top: 380px !important;
-  left: 780px !important;
-}
-.calc-window.compact .history-panel {
-  height: 72px;
-}
-.calc-window.compact .key-grid {
-  display: none;
-}
-.calc-window.compact .display-panel {
-  min-height: 48px;
-}
-
 .log-line.is-hidden {
   opacity: 0;
   transform: translateY(6px);

@@ -75,6 +75,7 @@ function resetDom() {
     k.classList.remove("key-highlight", "is-pressed");
   });
 
+  $("main-history-new").classList.add("is-hidden");
   $("history-entry").textContent = "220";
   document.querySelectorAll("#history-list li").forEach((li) => {
     li.classList.remove("selected", "is-pressed");
@@ -266,6 +267,7 @@ function applyErrorScene() {
 function applyEqualsResult() {
   $("main-entry").textContent = "220";
   $("main-sub").textContent = "";
+  $("main-history-new").classList.remove("is-hidden");
 }
 
 /** Fixed walkthrough length (ms) — must match DURATION_SEC in render.mjs */

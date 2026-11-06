@@ -1,4 +1,4 @@
-/* Mock Dalamud / ImGui dark chrome + Calc14 warm ember theme (from CalculatorWindow.cs) */
+/* Mock Dalamud / stock ImGui dark chrome (CalculatorWindow.cs pushes no colours or styles) */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: "Segoe UI", system-ui, sans-serif;
@@ -81,7 +81,7 @@ body {
   justify-content: space-between;
   height: 28px;
   padding: 0 8px;
-  background: linear-gradient(180deg, #3d3d45 0%, #2a2a30 100%);
+  background: #294a7a;
   border-bottom: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 4px 4px 0 0;
   font-size: 12px;
@@ -100,93 +100,87 @@ body {
   padding: 10px;
 }
 
-/* Calc14 tokens */
+/* Stock ImGui dark colours */
 :root {
-  --panel: rgba(36, 20, 15, 0.95);
-  --accent-orange: #f2731a;
-  --accent-orange-hover: #ff8c33;
-  --accent-red: #b8291f;
-  --keypad: #332119;
-  --text-warm: #ffebd9;
-  --text-dim: #bf9e85;
+  --button: #23446e;
+  --check: #4296fa;
+  --header: rgba(66, 150, 250, 0.31);
+  --border: rgba(110, 110, 128, 0.5);
+  --text: #ffffff;
+  --text-disabled: #808080;
 }
 
+/* AlwaysAutoResize: window hugs the 4 x 60 px keypad */
 .calc-window {
-  width: 320px;
+  width: fit-content;
 }
+.imgui-body { padding: 8px; }
 
 .display-panel {
-  background: var(--panel);
-  border-radius: 8px;
-  padding: 8px 10px;
-  min-height: 74px;
+  min-height: 40px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
 }
 .sub-display {
-  color: var(--text-dim);
+  color: var(--text);
   font-size: 13px;
   min-height: 18px;
   margin-bottom: 2px;
 }
 .main-display {
-  color: var(--text-warm);
+  color: var(--text);
   text-align: right;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.1;
 }
-.main-display.size-lg { font-size: 28px; }
-.main-display.size-md { font-size: 21px; }
-.main-display.size-sm { font-size: 17px; }
+/* SetWindowFontScale 1.6 / 1.2 / 0.8 of 13 px */
+.main-display.size-lg { font-size: 21px; }
+.main-display.size-md { font-size: 16px; }
+.main-display.size-sm { font-size: 10.5px; }
 
 .key-grid {
   display: grid;
   grid-template-columns: repeat(4, 60px);
-  gap: 0;
+  gap: 4px 8px;
   margin-top: 8px;
 }
 .key {
   width: 60px;
   height: 60px;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   margin: 0;
-  font-size: 18px;
-  color: var(--text-warm);
+  font-size: 13px;
+  color: var(--text);
   cursor: default;
   font-family: inherit;
 }
-.key-red { background: var(--accent-red); }
-.key-orange { background: var(--accent-orange); }
-.key-pad { background: var(--keypad); }
+.key { background: var(--button); }
 
 .history-row {
   margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #ccc;
+  color: var(--text);
   font-size: 13px;
 }
 .history-row input {
-  accent-color: var(--accent-orange);
+  accent-color: var(--check);
   width: 14px;
   height: 14px;
 }
 
 .history-panel {
-  background: var(--panel);
-  border-radius: 8px;
+  margin-top: 4px;
   height: 130px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
 }
 .history-panel.empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-dim);
+  padding: 8px;
+  color: var(--text-disabled);
   font-size: 13px;
 }
 .history-list {
@@ -196,24 +190,26 @@ body {
   padding: 4px 0;
 }
 .history-list li {
-  padding: 6px 10px;
-  color: var(--text-warm);
-  font-size: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 3px 8px;
+  color: var(--text);
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
 }
 .history-list li.selected {
-  background: rgba(242, 115, 26, 0.35);
+  background: var(--header);
 }
 .history-list li:last-child { border-bottom: none; }
+.history-list li.is-hidden { display: none; }
 
 .btn-clear {
-  margin-top: 6px;
-  padding: 6px 12px;
-  background: #2a2a32;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  color: #ddd;
-  font-size: 12px;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: var(--button);
+  border: none;
+  border-radius: 0;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
 }
 
 /* Dalamud log mock */
@@ -233,7 +229,7 @@ body {
 
 .chat-hint {
   position: absolute;
-  bottom: 28px;
+  bottom: 60px;
   left: 32px;
   padding: 8px 12px;
   background: rgba(0, 0, 0, 0.55);
@@ -252,7 +248,7 @@ body {
 .callout {
   position: absolute;
   font-size: 11px;
-  color: rgba(255, 235, 217, 0.7);
-  max-width: 200px;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 220px;
   line-height: 1.35;
 }
