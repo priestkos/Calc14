@@ -43,9 +43,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: |
-            10.0.x
-            8.0.x
+          dotnet-version: 10.0.x
 
       - name: Run the unit tests
         run: dotnet test Calc14.Tests/Calc14.Tests.csproj -c Release

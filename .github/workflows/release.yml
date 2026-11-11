@@ -122,6 +122,10 @@ jobs:
           Expand-Archive -Path dalamud.zip -DestinationPath $dest -Force
           exit 0
 
+      - name: Run the unit tests
+        if: steps.auto.outputs.skip != 'true'
+        run: dotnet test Calc14.Tests/Calc14.Tests.csproj -c Release
+
       - name: Build Calc14
         if: steps.auto.outputs.skip != 'true'
         shell: pwsh
@@ -158,12 +162,10 @@ jobs:
             $dllEntries = @($archive.Entries | Where-Object { $_.Name -like '*.dll' })
             if ($dllEntries.Count -eq 0) { throw 'No plugin .dll found inside latest.zip' }
 
-            [xml]$proj = Get-Content -LiteralPath 'Calc14.csproj'
-            $assemblyBase = ($proj.Project.PropertyGroup | ForEach-Object { $_.Name } | Where-Object { $_ } | Select-Object -First 1)
-            if (-not $assemblyBase) { $assemblyBase = 'Calc14' }
+            $assemblyBase = 'Calc14'
             $preferredDll = "$assemblyBase.dll"
             $dllEntry = $dllEntries | Where-Object { $_.Name -eq $preferredDll } | Select-Object -First 1
-            if (-not $dllEntry) { $dllEntry = $dllEntries | Select-Object -First 1 }
+            if (-not $dllEntry) { throw "$preferredDll not found inside latest.zip" }
 
             $manifestName = [System.IO.Path]::ChangeExtension($dllEntry.Name, '.json')
             $manifestEntry = $archive.Entries | Where-Object { $_.Name -eq $manifestName } | Select-Object -First 1
