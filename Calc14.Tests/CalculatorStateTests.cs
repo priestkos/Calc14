@@ -224,4 +224,122 @@ public class CalculatorStateTests
         Assert.Null(CalculatorState.Evaluate(huge));
         Assert.Null(CalculatorState.Evaluate(huge + "*0")); // Infinity * 0 = NaN
     }
+
+    [Theory]
+    [InlineData("8-3-2", 3.0)]      // left-associative
+    [InlineData("8/4/2", 1.0)]
+    [InlineData("2x3", 6.0)]        // x multiplies
+    [InlineData(" 1 + 2 ", 3.0)]
+    [InlineData("+5", 5.0)]         // unary plus
+    [InlineData("--5", 5.0)]
+    [InlineData("2--3", 5.0)]
+    [InlineData(".5*4", 2.0)]
+    public void Evaluate_more_expressions(string expr, double expected)
+    {
+        Assert.Equal(expected, CalculatorState.Evaluate(expr)!.Value, precision: 10);
+    }
+
+    [Theory]
+    [InlineData("1.2.3")]
+    [InlineData(".")]
+    [InlineData("")]
+    [InlineData("*2")]
+    [InlineData("(1+2)")]
+    [InlineData("1e5")]
+    public void Evaluate_more_invalid_returns_null(string expr)
+    {
+        Assert.Null(CalculatorState.Evaluate(expr));
+    }
+
+    [Theory]
+    [InlineData(double.NaN, "Error")]
+    [InlineData(double.PositiveInfinity, "Error")]
+    [InlineData(0.1 + 0.2, "0.3")]
+    [InlineData(-2.5, "-2.5")]
+    [InlineData(1e-11, "1E-11")]
+    [InlineData(123456789012345.0, "123456789012345")]
+    public void FormatResult_cases(double value, string expected)
+    {
+        Assert.Equal(expected, CalculatorState.FormatResult(value));
+    }
+
+    [Theory]
+    [InlineData("NaN")]
+    [InlineData("Infinity")]
+    [InlineData("")]
+    [InlineData("1,5")]
+    public void TrySetEntry_rejects_non_finite_and_bad_input(string value)
+    {
+        var calc = new CalculatorState();
+        Assert.False(calc.TrySetEntry(value));
+        Assert.Equal("0", calc.Entry);
+    }
+
+    [Fact]
+    public void Digit_leading_zero_dot_and_length_cap()
+    {
+        var calc = new CalculatorState();
+        calc.Digit('0'); calc.Digit('0');
+        Assert.Equal("0", calc.Entry);
+        calc.Digit('.'); calc.Digit('.'); calc.Digit('5');
+        Assert.Equal("0.5", calc.Entry);
+
+        calc = new CalculatorState();
+        foreach (var _ in Enumerable.Range(0, 20)) calc.Digit('9');
+        Assert.Equal(17, calc.Entry.Length);
+    }
+
+    [Fact]
+    public void Clear_entry_keeps_pending_operation()
+    {
+        var calc = new CalculatorState();
+        calc.Digit('9');
+        calc.SetOp(CalculatorState.Op.Sub);
+        calc.Digit('5');
+        calc.Clear();
+        Assert.True(calc.HasPending);
+        calc.Digit('4');
+        Assert.Equal("5", calc.Equals_());
+    }
+
+    [Fact]
+    public void Backspace_edits_typed_entry_only()
+    {
+        var calc = new CalculatorState();
+        calc.Digit('1'); calc.Digit('2');
+        calc.Backspace();
+        Assert.Equal("1", calc.Entry);
+        calc.Backspace();
+        Assert.Equal("0", calc.Entry);
+
+        calc.Digit('7');
+        calc.Equals_();
+        calc.Backspace(); // result is not editable
+        Assert.Equal("7", calc.Entry);
+    }
+
+    [Fact]
+    public void Repeated_operator_replaces_pending_op()
+    {
+        var calc = new CalculatorState();
+        calc.Digit('5');
+        calc.SetOp(CalculatorState.Op.Add);
+        Assert.Equal("5", calc.SetOp(CalculatorState.Op.Mul));
+        Assert.Equal(CalculatorState.Op.Mul, calc.CurrentOp);
+        calc.Digit('3');
+        Assert.Equal("15", calc.Equals_());
+    }
+
+    [Fact]
+    public void Ops_after_error_do_not_resurrect_state()
+    {
+        var calc = new CalculatorState();
+        calc.Digit('1');
+        calc.SetOp(CalculatorState.Op.Div);
+        calc.Digit('0');
+        calc.Equals_();
+        Assert.Equal("Error", calc.SetOp(CalculatorState.Op.Add));
+        Assert.False(calc.HasPending);
+        Assert.Null(calc.Equals_());
+    }
 }
