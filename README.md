@@ -87,7 +87,7 @@ Releases are published automatically on each push to `main` that changes the plu
 `CalculatorState` is a plain class, so the xUnit project runs offline without Dalamud: shunting-yard precedence and unary minus, rejected expressions, percent of the accumulator, the divide-by-zero reset, invariant formatting round-tripping through `TrySetEntry`, and operator chaining.
 
 ```
-dotnet test Calc14.Tests/Calc14.Tests.csproj    # 18 cases
+dotnet test Calc14.Tests/Calc14.Tests.csproj    # 53 cases
 ```
 
 ## Limits
