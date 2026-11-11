@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
@@ -55,7 +54,7 @@ public sealed class CalculatorWindow : Window, IDisposable
     private void Equals()
     {
         var expr = calc.HasPending
-            ? $"{calc.Accumulator.ToString(CultureInfo.InvariantCulture)} {OpName(calc.CurrentOp)} {calc.Entry}"
+            ? $"{CalculatorState.FormatResult(calc.Accumulator)} {OpName(calc.CurrentOp)} {calc.Entry}"
             : calc.Entry;
         var result = calc.Equals_();
         if (result is null)
