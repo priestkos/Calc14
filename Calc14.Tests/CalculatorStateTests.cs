@@ -202,6 +202,22 @@ public class CalculatorStateTests
     }
 
     [Fact]
+    public void Percent_overflow_errors_and_resets_pending_state()
+    {
+        var calc = new CalculatorState();
+        Assert.True(calc.TrySetEntry("1E+300"));
+        calc.SetOp(CalculatorState.Op.Add);
+        foreach (var c in "99999999999") calc.Digit(c);
+        calc.Percent(); // 1e300 * 1e11 / 100 overflows to Infinity
+        Assert.Equal("Error", calc.Entry);
+        Assert.False(calc.HasPending);
+        Assert.Equal(0, calc.Accumulator);
+
+        calc.Digit('3');
+        Assert.Equal("3", calc.Equals_()); // stale 1E+300 + pending op must not survive the error
+    }
+
+    [Fact]
     public void Evaluate_non_finite_returns_null()
     {
         var huge = new string('9', 400); // parses to +Infinity

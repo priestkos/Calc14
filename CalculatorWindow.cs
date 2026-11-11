@@ -143,7 +143,7 @@ public sealed class CalculatorWindow : Window, IDisposable
         Key("+", () => ApplyOp(CalculatorState.Op.Add, '+'));
 
         // Row 5: %, 0, ., =
-        Key("%", () => { calc.Percent(); display = calc.Entry; });
+        Key("%", () => { calc.Percent(); display = calc.Entry; if (display == "Error") subDisplay = string.Empty; });
         ImGui.SameLine();
         Key("0", () => { calc.Digit('0'); display = calc.Entry; });
         ImGui.SameLine();

@@ -105,14 +105,14 @@ public sealed class CalculatorState
     public void Percent()
     {
         if (!double.TryParse(entry, NumberStyles.Float, CultureInfo.InvariantCulture, out var v)) return;
-        if (pendingOp is Op.Add or Op.Sub && !freshEntry)
+        var result = pendingOp is Op.Add or Op.Sub && !freshEntry ? accumulator * v / 100.0 : v / 100.0;
+        if (IsErrorValue(result))
         {
-            entry = Format(accumulator * v / 100.0);
+            ClearAll();
+            entry = "Error";
+            return;
         }
-        else
-        {
-            entry = Format(v / 100.0);
-        }
+        entry = Format(result);
         percentResult = true;
     }
 
