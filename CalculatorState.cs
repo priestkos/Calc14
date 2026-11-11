@@ -30,8 +30,6 @@ public sealed class CalculatorState
             : d.ToString("0.############", CultureInfo.InvariantCulture);
     }
 
-    private static string Format(double d) => FormatResult(d);
-
     private static bool IsErrorValue(double d) => double.IsNaN(d) || double.IsInfinity(d);
 
     /// <summary>
@@ -48,7 +46,7 @@ public sealed class CalculatorState
             return false;
 
         ClearAll();
-        entry = Format(v);
+        entry = FormatResult(v);
         freshEntry = true;
         return true;
     }
@@ -96,11 +94,6 @@ public sealed class CalculatorState
         if (entry is "" or "-") entry = "0";
     }
 
-    public void Negate()
-    {
-        if (entry != "0") entry = entry.StartsWith('-') ? entry[1..] : "-" + entry;
-    }
-
     /// <summary>Percent: "x%" as an operand = x/100; but right after +/-, it is x% of the accumulator.</summary>
     public void Percent()
     {
@@ -112,7 +105,7 @@ public sealed class CalculatorState
             entry = "Error";
             return;
         }
-        entry = Format(result);
+        entry = FormatResult(result);
         percentResult = true;
     }
 
@@ -136,7 +129,7 @@ public sealed class CalculatorState
 
         pendingOp = op;
         freshEntry = true;
-        return Format(accumulator);
+        return FormatResult(accumulator);
     }
 
     /// <summary>Equals: applies pending operation and returns the display string, or null on error.</summary>
@@ -158,7 +151,7 @@ public sealed class CalculatorState
             return null;
         }
 
-        entry = Format(result);
+        entry = FormatResult(result);
         accumulator = 0;
         pendingOp = Op.None;
         freshEntry = true;
