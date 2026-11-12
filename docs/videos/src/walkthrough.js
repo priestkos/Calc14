@@ -297,6 +297,7 @@ function buildSchedule() {
   schedule(pctClick, (t) => {
     simulateClick(pctEl(), t);
     state.mainPctHighlight = true;
+    $("main-entry").textContent = "20"; // Percent(): 200 * 10 / 100
     setCaption("% after +/− — percent of accumulator (200 + 10%)", t);
   });
 
